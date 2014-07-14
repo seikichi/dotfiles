@@ -110,7 +110,7 @@ function _extract() {
 }
 
 # alias -s
-if which aunpack 1>/dev/null; then
+if which aunpack 1>/dev/null 2>&1; then
     alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz,rar,7z}=aunpack
 else
     alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz,rar,7z}=_extract
