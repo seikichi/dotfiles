@@ -39,6 +39,7 @@
 (depends-on "rhtml-mode")
 (depends-on "ruby-mode")
 (depends-on "sass-mode")
+(depends-on "scss-mode")
 (depends-on "slim-mode")
 (depends-on "yaml-mode")
 
