@@ -9,7 +9,7 @@
 export LANG=ja_JP.UTF-8
 export OUTPUT_CHARSET=utf-8
 export LV="-Ou8"
-export EDITOR="$HOME/.editor.sh"
+export EDITOR="env TERM=xterm-256color emacsclient -t"
 
 ## prompt
 PROMPT="%m:%n%% "
