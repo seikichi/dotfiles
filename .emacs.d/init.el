@@ -355,4 +355,4 @@
 ;; TypeScript
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 (autoload 'typescript-mode "TypeScript" "Major mode for editing typescript." t)
-(setq typescript-indent-level 4)
+(setq typescript-indent-level 2)
