@@ -3,3 +3,4 @@ ac-comphist.dat
 undohist
 .session
 .mc-lists.el
+flycheck_init.el
