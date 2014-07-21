@@ -197,8 +197,8 @@
 (require 'auto-complete-config)
 (ac-config-default)
 (global-set-key "\M-o" 'auto-complete)
-;; (setq ac-auto-start nil)
-(setq ac-auto-show-menu nil)
+(setq ac-auto-start nil)
+;; (setq ac-auto-show-menu nil)
 
 ;; ==================================================
 ;; Helm
