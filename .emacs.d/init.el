@@ -356,3 +356,9 @@
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 (autoload 'typescript-mode "TypeScript" "Major mode for editing typescript." t)
 (setq typescript-indent-level 2)
+
+;; SCSS
+(add-hook 'scss-mode-hook
+          (lambda ()
+            (setq css-indent-offset 2)
+            (setq scss-compile-at-save nil)))
