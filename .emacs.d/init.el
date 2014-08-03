@@ -264,8 +264,7 @@
 ;; ==================================================
 (require 'undo-tree)
 (global-undo-tree-mode t)
-(require 'undohist nil t)
-(undohist-initialize)
+(setq undo-tree-auto-save-history t)
 
 ;; ==================================================
 ;; Misc.

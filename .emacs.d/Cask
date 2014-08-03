@@ -21,7 +21,6 @@
 (depends-on "session")
 (depends-on "smartrep")
 (depends-on "smex")
-(depends-on "undohist")
 (depends-on "undo-tree")
 (depends-on "wgrep-ag")
 (depends-on "zenburn-theme")
