@@ -361,3 +361,6 @@
           (lambda ()
             (setq css-indent-offset 2)
             (setq scss-compile-at-save nil)))
+
+;; Scala
+(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
