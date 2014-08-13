@@ -368,3 +368,13 @@
 
 ;; Scala
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+
+;; Ruby
+(add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Cheffile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
