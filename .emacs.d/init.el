@@ -70,6 +70,7 @@
 (global-set-key "\C-o" 'dabbrev-expand)
 (global-set-key "\C-m" 'newline-and-indent)
 (global-set-key "\C-j" 'newline)
+(global-set-key "\M-," 'pop-tag-mark)
 (define-key minibuffer-local-completion-map  "\C-w" 'backward-kill-word)
 
 ;; ==================================================
@@ -222,6 +223,22 @@
                                helm-source-recentf
                                helm-source-buffer-not-found)))
 
+;; http://d.hatena.ne.jp/syohex/20131016/1381935863
+(defun my/helm-etags-select (arg)
+  (interactive "P")
+  (let ((tag  (helm-etags-get-tag-file))
+        (helm-execute-action-at-once-if-one t))
+    (when (or (equal arg '(4))
+              (and helm-etags-mtime-alist
+                   (helm-etags-file-modified-p tag)))
+      (remhash tag helm-etags-cache))
+    (if (and tag (file-exists-p tag))
+        (helm :sources 'helm-source-etags-select :keymap helm-etags-map
+              :input (concat (thing-at-point 'symbol) " ")
+              :buffer "*helm etags*"
+              :default (concat "\\_<" (thing-at-point 'symbol) "\\_>"))
+      (message "Error: No tag file found, please create one with etags shell command."))))
+
 ;; set helm-command-prefix-key to "C-q"
 (progn
   (require 'helm-config)
@@ -235,13 +252,16 @@
 ;; (global-set-key (kbd "M-x")   'helm-M-x)
 ;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
-(define-key helm-command-map (kbd "d") 'helm-descbinds)
-(define-key helm-command-map (kbd "o") 'helm-occur)
 (define-key helm-command-map (kbd "a") 'helm-ag)
+(define-key helm-command-map (kbd "d") 'helm-descbinds)
+(define-key helm-command-map (kbd "f") 'helm-flycheck)
+(define-key helm-command-map (kbd "g") 'helm-git-grep)
 (define-key helm-command-map (kbd "i") 'helm-imenu)
-(define-key helm-command-map (kbd "y") 'helm-show-kill-ring)
-(define-key helm-command-map (kbd "r") 'helm-resume)
 (define-key helm-command-map (kbd "l") 'helm-ls-git-ls)
+(define-key helm-command-map (kbd "o") 'helm-occur)
+(define-key helm-command-map (kbd "r") 'helm-resume)
+(define-key helm-command-map (kbd "t") 'my/helm-etags-select)
+(define-key helm-command-map (kbd "y") 'helm-show-kill-ring)
 
 ;; key settings for helm
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
@@ -359,6 +379,8 @@
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 (autoload 'typescript-mode "TypeScript" "Major mode for editing typescript." t)
 (setq typescript-indent-level 2)
+(add-hook 'typescript-mode-hook
+          (lambda () (define-key typescript-mode-map (kbd "M-.") 'find-tag)))
 
 ;; SCSS
 (add-hook 'scss-mode-hook
@@ -369,6 +391,9 @@
 ;; Scala
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 
+;; Lisp
+(add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
+
 ;; Ruby
 (add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
@@ -378,3 +403,7 @@
 (add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Cheffile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
+
+(add-hook 'ruby-mode-hook 'robe-mode)
+(add-hook 'robe-mode-hook 'ac-robe-setup)
+
