@@ -190,9 +190,6 @@
 ;; ==================================================
 ;; Thema
 ;; ==================================================
-;; (require 'color-theme)
-;; (color-theme-initialize)
-;; (color-theme-dark-laptop)
 (load-theme 'zenburn t)
 
 ;; ==================================================
@@ -240,12 +237,10 @@
       (message "Error: No tag file found, please create one with etags shell command."))))
 
 ;; set helm-command-prefix-key to "C-q"
-(progn
-  (require 'helm-config)
-  (global-set-key (kbd "C-c q") 'quoted-insert)
-  (global-unset-key (kbd "C-q"))
-  (custom-set-variables
-   '(helm-command-prefix-key "C-q")))
+(require 'helm-config)
+(global-set-key (kbd "C-c q") 'quoted-insert)
+(global-unset-key (kbd "C-q"))
+(custom-set-variables '(helm-command-prefix-key "C-q"))
 
 ;; key settings
 (global-set-key (kbd "C-x b") 'helm-mini)
@@ -267,10 +262,6 @@
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
 (define-key helm-map (kbd "C-w") 'backward-kill-word)
 (define-key helm-map (kbd "C-a") 'move-beginning-of-line)
-;; ;; key settings for helm-find-files
-;; (define-key helm-find-files-map (kbd "C-h") 'delete-backward-char)
-;; (define-key helm-read-file-map (kbd "TAB") 'helm-execute-persistent-action)
-;; (define-key helm-find-files-map (kbd "TAB") 'helm-execute-persistent-action)
 ;; helm-occur
 (define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
 
@@ -280,7 +271,6 @@
 (require 'howm)
 (setq howm-menu-lang 'ja)
 (setq howm-directory "~/Dropbox/howm")
-
 
 ;; ==================================================
 ;; Undo
@@ -310,15 +300,12 @@
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; ;; smartparens
-;; (smartparens-global-mode t)
-
 ;; multiple-cursors & smartrep
 (require 'multiple-cursors)
 (require 'smartrep)
 (declare-function smartrep-define-key "smartrep")
-(global-unset-key "\M-q")
-(smartrep-define-key global-map "M-q"
+(global-unset-key "\M-m")
+(smartrep-define-key global-map "M-m"
   '(("n"        . 'mc/mark-next-like-this)
     ("N"        . 'mc/mark-previous-like-this)
     ("p"        . 'mc/mark-previous-like-this)
@@ -363,14 +350,6 @@
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 
-;; ;; session
-;; (require 'session)
-;; (add-hook 'after-init-hook 'session-initialize)
-
-;; ;; smex
-;; (global-set-key (kbd "M-x") 'smex)
-;; (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-
 ;; ag
 (require 'ag)
 (custom-set-variables
@@ -403,6 +382,7 @@
 ;; ace-jump-mode
 (global-set-key (kbd "M-j") 'ace-jump-mode)
 (global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
+(global-set-key (kbd "C-M-J") 'ace-jump-line-mode)
 
 ;; ==================================================
 ;; Prog Modes
@@ -441,4 +421,3 @@
 
 (add-hook 'ruby-mode-hook 'robe-mode)
 (add-hook 'robe-mode-hook 'ac-robe-setup)
-
