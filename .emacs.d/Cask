@@ -3,6 +3,7 @@
 (source melpa)
 (source marmalade)
 
+(depends-on "ace-jump-mode")
 (depends-on "ag")
 (depends-on "anzu")
 (depends-on "auto-complete")

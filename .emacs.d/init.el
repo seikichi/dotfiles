@@ -400,6 +400,10 @@
 (global-set-key (kbd "M-%") 'anzu-query-replace)
 (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
 
+;; ace-jump-mode
+(global-set-key (kbd "M-j") 'ace-jump-mode)
+(global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
+
 ;; ==================================================
 ;; Prog Modes
 ;; ==================================================
