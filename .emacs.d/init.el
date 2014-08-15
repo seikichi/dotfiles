@@ -378,6 +378,12 @@
                            (set-file-modes name (logior mode (logand (/ mode 4) 73)))
                            (message (concat "Wrote " name " (+x)")))))))))
 
+;; anzu
+(global-anzu-mode t)
+(setq anzu-search-threshold 1000)
+(global-set-key (kbd "M-%") 'anzu-query-replace)
+(global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
+
 ;; ==================================================
 ;; Prog Modes
 ;; ==================================================

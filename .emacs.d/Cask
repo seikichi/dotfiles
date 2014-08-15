@@ -4,6 +4,7 @@
 (source marmalade)
 
 (depends-on "ag")
+(depends-on "anzu")
 (depends-on "auto-complete")
 (depends-on "color-theme")
 (depends-on "expand-region")
