@@ -320,6 +320,7 @@
 (global-unset-key "\M-q")
 (smartrep-define-key global-map "M-q"
   '(("n"        . 'mc/mark-next-like-this)
+    ("N"        . 'mc/mark-previous-like-this)
     ("p"        . 'mc/mark-previous-like-this)
     ("m"        . 'mc/mark-more-like-this-extended)
     ("u"        . 'mc/unmark-next-like-this)
@@ -331,6 +332,21 @@
     ("i"        . 'mc/insert-numbers)
     ("o"        . 'mc/sort-regions)
     ("O"        . 'mc/reverse-regions)))
+
+;; highlight-symbol & smartrep
+(global-unset-key (kbd "M-s"))
+(smartrep-define-key global-map "M-s"
+  '(("M-s"        . 'highlight-symbol-next)
+    ("h"          . 'highlight-symbol-at-point)
+    ("n"          . 'highlight-symbol-next)
+    ("N"          . 'highlight-symbol-prev)
+    ("p"          . 'highlight-symbol-prev)
+    ("l"          . 'highlight-symbol-list-all)
+    ("a"          . 'highlight-symbol-remove-all)
+    ("o"          . 'highlight-symbol-occur)
+    ("j"          . 'highlight-symbol-next-in-defun)
+    ("k"          . 'highlight-symbol-prev-in-defun)
+    ("r"          . 'highlight-symbol-query-replace)))
 
 ;; ignores cases in file completetion
 (setq completion-ignore-case t)
