@@ -191,14 +191,16 @@
 ;; Thema
 ;; ==================================================
 (load-theme 'zenburn t)
+(set-face-background 'linum "#2f2f2f")
 
 ;; ==================================================
 ;; Auto Complete
 ;; ==================================================
-(require 'auto-complete-config)
 (ac-config-default)
 (global-set-key "\M-o" 'auto-complete)
 (setq ac-auto-start nil)
+(setq ac-ignore-case nil)
+(setq ac-quick-help-delay 0.2)
 ;; (setq ac-auto-show-menu nil)
 
 ;; ==================================================
@@ -206,19 +208,17 @@
 ;; ==================================================
 (require 'helm-config)
 (require 'helm)
-(require 'helm-ag)
-(require 'helm-ls-git)
 
 ;; customize
-(custom-set-variables
- '(helm-delete-minibuffer-contents-from-point t)
- '(helm-ff-skip-boring-files t)
- '(helm-boring-file-regexp-list '("~$" "\\.elc$"))
- '(helm-ls-git-show-abs-or-relative 'relative)
- '(helm-mini-default-sources '(helm-source-buffers-list
-                               helm-source-ls-git
-                               helm-source-recentf
-                               helm-source-buffer-not-found)))
+(setq helm-boring-file-regexp-list '("~$" "\\.elc$"))
+(setq helm-delete-minibuffer-contents-from-point t)
+(setq helm-ff-skip-boring-files t)
+(setq helm-ls-git-show-abs-or-relative 'relative)
+(setq helm-mini-default-sources '(helm-source-buffers-list
+                                  helm-source-ls-git
+                                  helm-source-recentf
+                                  helm-source-buffer-not-found))
+(setq helm-truncate-lines 't)
 
 ;; http://d.hatena.ne.jp/syohex/20131016/1381935863
 (defun my/helm-etags-select (arg)
@@ -237,14 +237,13 @@
       (message "Error: No tag file found, please create one with etags shell command."))))
 
 ;; set helm-command-prefix-key to "C-q"
-(require 'helm-config)
 (global-set-key (kbd "C-c q") 'quoted-insert)
 (global-unset-key (kbd "C-q"))
 (custom-set-variables '(helm-command-prefix-key "C-q"))
 
 ;; key settings
 (global-set-key (kbd "C-x b") 'helm-mini)
-;; (global-set-key (kbd "M-x")   'helm-M-x)
+(global-set-key (kbd "M-x")   'helm-M-x)
 ;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 (define-key helm-command-map (kbd "a") 'helm-ag)
@@ -258,11 +257,16 @@
 (define-key helm-command-map (kbd "t") 'my/helm-etags-select)
 (define-key helm-command-map (kbd "y") 'helm-show-kill-ring)
 
+(if (eq system-type 'darwin)
+    (progn
+      (define-key helm-command-map (kbd "m") 'helm-dash)
+      (define-key helm-command-map (kbd ".") 'helm-dash-at-point)))
+
 ;; key settings for helm
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
 (define-key helm-map (kbd "C-w") 'backward-kill-word)
-(define-key helm-map (kbd "C-a") 'move-beginning-of-line)
-;; helm-occur
+(define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
+;; move to occur mode when C-o is typed in isearch
 (define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
 
 ;; ==================================================
@@ -299,6 +303,9 @@
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
+(eval-after-load 'flycheck
+  '(custom-set-variables
+    '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
 
 ;; multiple-cursors & smartrep
 (require 'multiple-cursors)
@@ -384,6 +391,18 @@
 (global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
 (global-set-key (kbd "C-M-J") 'ace-jump-line-mode)
 
+;; use helm in robe
+;; http://d.hatena.ne.jp/syohex/20131222/1387722542
+(custom-set-variables
+ '(robe-completing-read-func 'helm-robe-completing-read))
+
+(defun helm-robe-completing-read (prompt choices &optional predicate require-match)
+  (let ((collection (mapcar (lambda (c) (if (listp c) (car c) c)) choices)))
+    (helm-comp-read prompt collection :test predicate :must-match require-match)))
+
+;; powerline
+(powerline-default-theme)
+
 ;; ==================================================
 ;; Prog Modes
 ;; ==================================================
@@ -421,3 +440,6 @@
 
 (add-hook 'ruby-mode-hook 'robe-mode)
 (add-hook 'robe-mode-hook 'ac-robe-setup)
+
+;; Python
+(add-hook 'python-mode-hook 'jedi:setup)

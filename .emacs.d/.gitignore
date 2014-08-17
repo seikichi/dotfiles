@@ -4,3 +4,6 @@ undohist
 .session
 .mc-lists.el
 flycheck_init.el
+eshell
+tramp
+.python-environments
