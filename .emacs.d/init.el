@@ -214,10 +214,6 @@
 (setq helm-delete-minibuffer-contents-from-point t)
 (setq helm-ff-skip-boring-files t)
 (setq helm-ls-git-show-abs-or-relative 'relative)
-(setq helm-mini-default-sources '(helm-source-buffers-list
-                                  helm-source-ls-git
-                                  helm-source-recentf
-                                  helm-source-buffer-not-found))
 (setq helm-truncate-lines 't)
 
 ;; http://d.hatena.ne.jp/syohex/20131016/1381935863
