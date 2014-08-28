@@ -443,3 +443,14 @@
 
 ;; Python
 (add-hook 'python-mode-hook 'jedi:setup)
+
+;; Go
+(require 'go-autocomplete)
+(add-hook 'go-mode-hook 'go-eldoc-setup)
+(add-hook 'before-save-hook 'gofmt-before-save)
+(add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
+(add-to-list 'exec-path (expand-file-name "~/.go/bin"))
+(set-face-attribute 'eldoc-highlight-function-argument
+                    nil :underline t :foreground "#7F9F7F" :weight 'bold)
+(font-lock-add-keywords
+ 'go-mode '(("\\b\\(err\\)\\b" 1 '((:foreground "#7F9F7F") (:weight bold)) t)))

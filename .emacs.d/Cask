@@ -12,6 +12,8 @@
 (depends-on "flycheck")
 (depends-on "flycheck-pos-tip")
 (depends-on "git-gutter")
+(depends-on "go-autocomplete")
+(depends-on "go-eldoc")
 ;; (depends-on "helm") ;; see below
 (depends-on "helm-ag")
 (depends-on "helm-dash")
@@ -41,6 +43,7 @@
 (depends-on "git-commit-mode")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
+(depends-on "go-mode")
 (depends-on "js2-mode")
 (depends-on "json-mode")
 (depends-on "less-css-mode")

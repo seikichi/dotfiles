@@ -68,7 +68,6 @@ bindkey "^O" edit-command-line
 alias ll="ls -lh --color=auto"
 alias ls="ls --color=auto"
 alias df="df -h"
-alias go='gnome-open'
 alias e=$EDITOR
 # sudo
 alias sudo='sudo '
@@ -138,3 +137,6 @@ zle -N self-insert url-quote-magic
 # C-w
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
+# Go
+export GOPATH=$HOME/.go
+export PATH=$PATH:$GOPATH
