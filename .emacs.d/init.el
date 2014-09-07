@@ -450,3 +450,6 @@
                     nil :underline t :foreground "#7F9F7F" :weight 'bold)
 (font-lock-add-keywords
  'go-mode '(("\\b\\(err\\)\\b" 1 '((:foreground "#7F9F7F") (:weight bold)) t)))
+
+;; Java/Groovy
+(add-to-list 'auto-mode-alist '("\\.gradle" . groovy-mode))
