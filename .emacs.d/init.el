@@ -399,6 +399,9 @@
 ;; powerline
 (powerline-default-theme)
 
+;; local
+(if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
+
 ;; ==================================================
 ;; Prog Modes
 ;; ==================================================
@@ -450,3 +453,4 @@
                     nil :underline t :foreground "#7F9F7F" :weight 'bold)
 (font-lock-add-keywords
  'go-mode '(("\\b\\(err\\)\\b" 1 '((:foreground "#7F9F7F") (:weight bold)) t)))
+
