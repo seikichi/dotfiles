@@ -10,7 +10,6 @@
 (depends-on "color-theme")
 (depends-on "expand-region")
 (depends-on "flycheck")
-(depends-on "flycheck-pos-tip")
 (depends-on "git-gutter")
 (depends-on "go-autocomplete")
 (depends-on "go-eldoc")
