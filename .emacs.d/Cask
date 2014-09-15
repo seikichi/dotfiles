@@ -61,5 +61,6 @@
 ;; from github
 (depends-on "emacs-calfw" :git "https://github.com/kiwanami/emacs-calfw.git" :files ("*.el"))
 (depends-on "emacs-tss" :git "https://github.com/aki2o/emacs-tss.git" :files ("*.el"))
+(depends-on "go-impl" :git "https://github.com/syohex/emacs-go-impl" :files ("*.el"))
 (depends-on "helm" :git "https://github.com/abicky/helm.git" :branch "develop" :files ("*.el"))
 (depends-on "howm" :git "https://github.com/emacsmirror/howm.git" :files ("*.el"))
