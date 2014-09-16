@@ -177,8 +177,8 @@
 (setq text-mode-hook 'turn-off-auto-fill)
 
 ;; truncate
-(setq truncate-lines nil)
-(setq truncate-partial-width-windows nil)
+(set-default 'truncate-lines t)
+(set-default 'truncate-partial-width-windows t)
 
 ;; ==================================================
 ;; Indent
@@ -299,9 +299,6 @@
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
-(eval-after-load 'flycheck
-  '(custom-set-variables
-    '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
 
 ;; multiple-cursors & smartrep
 (require 'multiple-cursors)
@@ -448,6 +445,7 @@
 (add-hook 'go-mode-hook 'go-eldoc-setup)
 (add-hook 'before-save-hook 'gofmt-before-save)
 (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
+(add-hook 'go-mode-hook (lambda () (local-set-key (kbd "C-c C-i") 'go-impl)))
 (add-to-list 'exec-path (expand-file-name "~/.go/bin"))
 (set-face-attribute 'eldoc-highlight-function-argument
                     nil :underline t :foreground "#7F9F7F" :weight 'bold)
