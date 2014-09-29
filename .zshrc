@@ -10,6 +10,7 @@ export LANG=ja_JP.UTF-8
 export OUTPUT_CHARSET=utf-8
 export LV="-Ou8"
 export EDITOR="env TERM=xterm-256color emacsclient -t"
+export GREP_OPTIONS="--binary-files=without-match --color=auto"
 
 ## prompt
 PROMPT="%m:%n%% "
@@ -138,5 +139,5 @@ zle -N self-insert url-quote-magic
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
 # Go
-export GOPATH=$HOME/.go
-export PATH=$PATH:$GOPATH
+export GOPATH=$HOME/go
+export PATH=$PATH:$HOME/go/bin

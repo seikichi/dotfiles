@@ -7,3 +7,5 @@ flycheck_init.el
 eshell
 tramp
 .python-environments
+semanticdb
+srecode-map.el
