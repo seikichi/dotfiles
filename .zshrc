@@ -144,7 +144,7 @@ function man() {
 }
 
 # color pager
-export LESS='-R'
+export LESS='-R -x2'
 if which pygmentize  1>/dev/null 2>&1; then
     export LESSOPEN='| ~/dotfiles/.lessfilter %s'
 fi
