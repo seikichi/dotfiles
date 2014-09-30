@@ -1,19 +1,4 @@
-# Configuration file for dircolors, a utility to help you set the
-# LS_COLORS environment variable used by GNU ls with the --color option.
-
-# Copyright (C) 1996, 1999-2008
-# Free Software Foundation, Inc.
-# Copying and distribution of this file, with or without modification,
-# are permitted provided the copyright notice and this notice are preserved.
-
-# The keywords COLOR, OPTIONS, and EIGHTBIT (honored by the
-# slackware version of dircolors) are recognized but ignored.
-
-# You can copy this file to .dir_colors in your $HOME directory to override
-# the system defaults.
-
-# Below, there should be one TERM entry for each termtype that is colorizable
-"TERM Eterm
+TERM Eterm
 TERM ansi
 TERM color-xterm
 TERM con132x25
@@ -90,18 +75,7 @@ EXEC 01;38;05;47
 # to colorize below. Put the extension, a space, and the color init string.
 # (and any comments you want to add after a '#')
 
-# If you use DOS-style suffixes, you may want to uncomment the following:
-#.cmd 01;32 # executables (bright green)
-#.exe 01;32
-#.com 01;32
-#.btm 01;32
-#.bat 01;32
-# Or if you want to colorize scripts even if they do not have the
-# executable bit actually set.
-#.sh  01;32
-#.csh 01;32
-
-# archives or compressed (bright red)
+# archives or compressed
 .tar 01;38;05;168
 .tgz 01;38;05;168
 .svgz 01;38;05;168
@@ -182,6 +156,10 @@ EXEC 01;38;05;47
 .log 00;38;05;76
 .tex 00;38;05;76
 .doc 00;38;05;76
+.md 00;38;05;76
+.markdown 00;38;05;76
+.rst 00;38;05;76
+.csv 00;38;05;76
 
 .chm 00;38;05;76
 .css 00;38;05;76
@@ -222,7 +200,13 @@ EXEC 01;38;05;47
 .cfg 00;38;05;227
 .conf 00;38;05;227
 .ini 00;38;05;227
+.yml 00;38;05;227
+.json 00;38;05;227
 .reg 00;38;05;227
+.gitignore 00;38;05;227
+.ctags 00;38;05;227
+.gitconfig 00;38;05;227
+
 
 # development Files
 .c 01;38;05;209
@@ -230,7 +214,16 @@ EXEC 01;38;05;47
 .cpp 01;38;05;209
 .cxx 01;38;05;209
 .h 01;38;05;209
+.hpp 01;38;05;209
 .po 01;38;05;209
+.java 01;38;05;209
+.go 01;38;05;209
+.js 01;38;05;209
+.coffee 01;38;05;209
+.rb 01;38;05;209
+.pl 01;38;05;209
+.py 01;38;05;209
+.el 01;38;05;209
 
 .gmo 01;38;05;216
 .ko 01;38;05;216
@@ -239,3 +232,6 @@ EXEC 01;38;05;47
 
 # base64
 .b64 00;38;05;79
+
+# temporary file
+.~undo-tree~ 00;38;05;60

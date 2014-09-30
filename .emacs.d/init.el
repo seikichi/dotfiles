@@ -442,13 +442,17 @@
 
 ;; Go
 (require 'go-autocomplete)
+(load "~/go/src/code.google.com/p/go.tools/refactor/rename/rename.el")
+;; (load "~/go/src/code.google.com/p/go.tools/cmd/oracle/oracle.el")
 (add-hook 'go-mode-hook 'go-eldoc-setup)
 (add-hook 'before-save-hook 'gofmt-before-save)
 (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
 (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "C-c C-i") 'go-impl)))
-(add-to-list 'exec-path (expand-file-name "~/.go/bin"))
+(add-hook 'go-mode-hook (lambda () (local-set-key (kbd "C-c C-r") 'go-rename)))
+(add-to-list 'exec-path (expand-file-name "~/go/bin"))
 (set-face-attribute 'eldoc-highlight-function-argument
                     nil :underline t :foreground "#7F9F7F" :weight 'bold)
+(setq gofmt-command "goimports")
 (font-lock-add-keywords
  'go-mode '(("\\b\\(err\\)\\b" 1 '((:foreground "#7F9F7F") (:weight bold)) t)))
 

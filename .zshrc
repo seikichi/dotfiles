@@ -10,6 +10,7 @@ export LANG=ja_JP.UTF-8
 export OUTPUT_CHARSET=utf-8
 export LV="-Ou8"
 export EDITOR="env TERM=xterm-256color emacsclient -t"
+export GREP_OPTIONS="--binary-files=without-match --color=auto"
 
 ## prompt
 PROMPT="%m:%n%% "
@@ -115,6 +116,39 @@ else
     alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz,rar,7z}=_extract
 fi
 
+# use grc to color some commands command if exists
+if which grc  1>/dev/null 2>&1; then
+    alias mount='grc mount'
+    alias ifconfig='grc ifconfig'
+    alias dig='grc dig'
+    alias ldap='grc ldap'
+    alias netstat='grc netstat'
+    alias ping='grc ping'
+    alias ps='grc ps'
+    alias traceroute='grc traceroute'
+    alias gcc='grc gcc'
+fi
+
+# color man page
+export MANPAGER='less -R'
+function man() {
+    env \
+        LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+        LESS_TERMCAP_md=$(printf "\e[1;31m") \
+        LESS_TERMCAP_me=$(printf "\e[0m") \
+        LESS_TERMCAP_se=$(printf "\e[0m") \
+        LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+        LESS_TERMCAP_ue=$(printf "\e[0m") \
+        LESS_TERMCAP_us=$(printf "\e[1;32m") \
+        man "$@"
+}
+
+# color pager
+export LESS='-R -x2'
+if which pygmentize  1>/dev/null 2>&1; then
+    export LESSOPEN='| ~/dotfiles/.lessfilter %s'
+fi
+
 function tex2pdf() {
     platex $1 && dvipdf ${1/.tex/.dvi} && acroread ${1/.tex/.pdf}
 }
@@ -138,5 +172,5 @@ zle -N self-insert url-quote-magic
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
 # Go
-export GOPATH=$HOME/.go
-export PATH=$PATH:$GOPATH
+export GOPATH=$HOME/go
+export PATH=$PATH:$HOME/go/bin
