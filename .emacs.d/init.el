@@ -250,6 +250,7 @@
 (define-key helm-command-map (kbd "l") 'helm-ls-git-ls)
 (define-key helm-command-map (kbd "o") 'helm-occur)
 (define-key helm-command-map (kbd "r") 'helm-resume)
+(define-key helm-command-map (kbd "s") 'helm-yas-complete)
 (define-key helm-command-map (kbd "t") 'my/helm-etags-select)
 (define-key helm-command-map (kbd "y") 'helm-show-kill-ring)
 
@@ -381,8 +382,8 @@
 
 ;; ace-jump-mode
 (global-set-key (kbd "M-j") 'ace-jump-mode)
-(global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
-(global-set-key (kbd "C-M-J") 'ace-jump-line-mode)
+;; (global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
+;; (global-set-key (kbd "C-M-J") 'ace-jump-line-mode)
 
 ;; use helm in robe
 ;; http://d.hatena.ne.jp/syohex/20131222/1387722542
@@ -395,6 +396,9 @@
 
 ;; powerline
 (powerline-default-theme)
+
+;; yasnippet
+(yas-global-mode)
 
 ;; ==================================================
 ;; Prog Modes

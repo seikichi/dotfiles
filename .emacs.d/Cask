@@ -36,6 +36,7 @@
 (depends-on "smex")
 (depends-on "undo-tree")
 (depends-on "wgrep-ag")
+(depends-on "yasnippet")
 (depends-on "zenburn-theme")
 
 ;; prog modes
@@ -57,6 +58,9 @@
 (depends-on "scss-mode")
 (depends-on "slim-mode")
 (depends-on "yaml-mode")
+
+;; snippets
+(depends-on "java-snippets")
 
 ;; from github
 (depends-on "emacs-calfw" :git "https://github.com/kiwanami/emacs-calfw.git" :files ("*.el"))
