@@ -45,6 +45,7 @@
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
 (depends-on "go-mode")
+(depends-on "graphviz-dot-mode")
 (depends-on "groovy-mode")
 (depends-on "js2-mode")
 (depends-on "json-mode")
