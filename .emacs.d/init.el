@@ -459,3 +459,9 @@
 
 ;; Java/Groovy
 (add-to-list 'auto-mode-alist '("\\.gradle" . groovy-mode))
+
+;; PlantUML
+(setq plantuml-jar-path (expand-file-name "~/dotfiles/bin/plantuml.jar"))
+(setq plantuml-java-options "")
+(setq plantuml-options "-charset UTF-8")
+(add-to-list 'auto-mode-alist '("\\.plantuml$" . plantuml-mode))
