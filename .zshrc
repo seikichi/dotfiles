@@ -59,6 +59,7 @@ setopt correct
 setopt correct_all
 setopt list_packed
 setopt magic_equal_subst
+setopt no_flow_control
 
 # edit command line in emacs (C-o)
 autoload -U edit-command-line
@@ -174,3 +175,69 @@ WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 # Go
 export GOPATH=$HOME/go
 export PATH=$PATH:$HOME/go/bin
+
+# peco
+function peco-select-history() {
+    local tac
+    if which tac > /dev/null; then
+        tac="tac"
+    else
+        tac="tail -r"
+    fi
+    BUFFER=$(\history -n 1 | \
+        eval $tac | \
+        peco --query "$LBUFFER")
+    CURSOR=$#BUFFER
+    zle clear-screen
+}
+zle -N peco-select-history
+
+autoload -Uz is-at-least
+if is-at-least 4.3.11; then
+    autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+    add-zsh-hook chpwd chpwd_recent_dirs
+    zstyle ':chpwd:*' recent-dirs-max 5000
+    zstyle ':chpwd:*' recent-dirs-default yes
+    zstyle ':completion:*' recent-dirs-insert both
+fi
+function peco-cdr () {
+    local selected_dir="$(cdr -l | awk '{ print $2 }' | peco)"
+    if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+    fi
+    zle clear-screen
+}
+zle -N peco-cdr
+
+function peco-kill-process () {
+    \ps -ef | peco | awk '{ print $2 }' | xargs -n1 kill
+    zle clear-screen
+}
+zle -N peco-kill-process
+
+function peco-find-file () {
+    ls | peco | xargs -n1 env TERM=xterm-256color emacsclient -t
+    zle clear-screen
+}
+zle -N peco-find-file
+
+function peco-open-app () {
+    ls | peco | xargs open
+    zle clear-screen
+}
+zle -N peco-open-app
+
+if [ -x "`which peco`" ]; then
+    bindkey '^r' peco-select-history
+    bindkey '^x^f' peco-find-file
+
+    bindkey '^xd' peco-cdr
+    bindkey '^x^d' peco-cdr
+
+    bindkey '^xk' peco-kill-process
+    bindkey '^x^k' peco-kill-process
+
+    bindkey '^xo' peco-open-app
+    bindkey '^x^o' peco-open-app
+fi
