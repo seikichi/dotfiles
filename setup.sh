@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR=$(dirname ${0})
-DOT_FILES=( .zshrc .gitconfig .tmux.conf .dir_colors .emacs.d )
+DOT_FILES=( .zshrc .gitconfig .tmux.conf .dir_colors .emacs.d .peco )
 
 for file in ${DOT_FILES[@]}
 do
