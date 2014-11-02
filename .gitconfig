@@ -3,3 +3,5 @@
 	name = Seiichi KONDO
 [alias]
 	co = checkout
+[ghq]
+	root = ~/go/src

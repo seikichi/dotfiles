@@ -228,16 +228,23 @@ function peco-open-app () {
 }
 zle -N peco-open-app
 
+function peco-src () {
+    local selected_dir="$(ghq list -p | peco --query "$LBUFFER")"
+    if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+    fi
+    zle clear-screen
+}
+zle -N peco-src
+
 if [ -x "`which peco`" ]; then
     bindkey '^r' peco-select-history
-    bindkey '^x^f' peco-find-file
 
-    bindkey '^xd' peco-cdr
-    bindkey '^x^d' peco-cdr
-
+    bindkey '^xr' peco-select-history
+    bindkey '^xf' peco-find-file
+    bindkey '^xc' peco-cdr
     bindkey '^xk' peco-kill-process
-    bindkey '^x^k' peco-kill-process
-
     bindkey '^xo' peco-open-app
-    bindkey '^x^o' peco-open-app
+    bindkey '^xs' peco-src
 fi
