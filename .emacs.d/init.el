@@ -320,6 +320,7 @@
     ("i"        . 'mc/insert-numbers)
     ("o"        . 'mc/sort-regions)
     ("O"        . 'mc/reverse-regions)))
+(define-key mc/keymap (kbd "C-c h") 'mc-hide-unmatched-lines-mode)
 
 ;; highlight-symbol & smartrep
 (global-unset-key (kbd "M-s"))
