@@ -281,17 +281,39 @@
 (setq undo-tree-auto-save-history t)
 
 ;; ==================================================
+;; multiple-cursor
+;; ==================================================
+;; multiple-cursors & smartrep
+(require 'multiple-cursors)
+(require 'region-bindings-mode)
+(region-bindings-mode-enable)
+
+(define-key region-bindings-mode-map "a" 'mc/mark-all-like-this)
+(define-key region-bindings-mode-map "d" 'mc/mark-all-dwim)
+(define-key region-bindings-mode-map "n" 'mc/mark-next-like-this)
+(define-key region-bindings-mode-map "N" 'mc/mark-previous-like-this)
+(define-key region-bindings-mode-map "p" 'mc/mark-previous-like-this)
+(define-key region-bindings-mode-map "m" 'mc/mark-more-like-this-extended)
+(define-key region-bindings-mode-map "u" 'mc/unmark-next-like-this)
+(define-key region-bindings-mode-map "U" 'mc/unmark-previous-like-this)
+(define-key region-bindings-mode-map "s" 'mc/skip-to-next-like-this)
+(define-key region-bindings-mode-map "S" 'mc/skip-to-previous-like-this)
+(define-key region-bindings-mode-map "i" 'mc/insert-numbers)
+(define-key region-bindings-mode-map "h" 'mc-hide-unmatched-lines-mode)
+(define-key mc/keymap (kbd "C-c h") 'mc-hide-unmatched-lines-mode)
+
+;; expand-region
+(require 'expand-region)
+(global-set-key (kbd "M-@") 'er/expand-region)
+(global-set-key (kbd "M-`") 'er/contract-region)
+
+;; ==================================================
 ;; Misc.
 ;; ==================================================
 ;; popwin
 (require 'popwin)
 (setq display-buffer-function 'popwin:display-buffer)
 (push '("^\*helm .+\*$" :regexp t) popwin:special-display-config)
-
-;; expand-region
-(require 'expand-region)
-(global-set-key (kbd "M-@") 'er/expand-region)
-(global-set-key (kbd "M-`") 'er/contract-region)
 
 ;; git-gutter
 (require 'git-gutter)
@@ -300,42 +322,6 @@
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
-
-;; multiple-cursors & smartrep
-(require 'multiple-cursors)
-(require 'smartrep)
-(declare-function smartrep-define-key "smartrep")
-(global-unset-key "\M-m")
-(smartrep-define-key global-map "M-m"
-  '(("n"        . 'mc/mark-next-like-this)
-    ("N"        . 'mc/mark-previous-like-this)
-    ("p"        . 'mc/mark-previous-like-this)
-    ("m"        . 'mc/mark-more-like-this-extended)
-    ("u"        . 'mc/unmark-next-like-this)
-    ("U"        . 'mc/unmark-previous-like-this)
-    ("s"        . 'mc/skip-to-next-like-this)
-    ("S"        . 'mc/skip-to-previous-like-this)
-    ("*"        . 'mc/mark-all-like-this)
-    ("d"        . 'mc/mark-all-like-this-dwim)
-    ("i"        . 'mc/insert-numbers)
-    ("o"        . 'mc/sort-regions)
-    ("O"        . 'mc/reverse-regions)))
-(define-key mc/keymap (kbd "C-c h") 'mc-hide-unmatched-lines-mode)
-
-;; highlight-symbol & smartrep
-(global-unset-key (kbd "M-s"))
-(smartrep-define-key global-map "M-s"
-  '(("M-s"        . 'highlight-symbol-next)
-    ("h"          . 'highlight-symbol-at-point)
-    ("n"          . 'highlight-symbol-next)
-    ("N"          . 'highlight-symbol-prev)
-    ("p"          . 'highlight-symbol-prev)
-    ("l"          . 'highlight-symbol-list-all)
-    ("a"          . 'highlight-symbol-remove-all)
-    ("o"          . 'highlight-symbol-occur)
-    ("j"          . 'highlight-symbol-next-in-defun)
-    ("k"          . 'highlight-symbol-prev-in-defun)
-    ("r"          . 'highlight-symbol-query-replace)))
 
 ;; ignores cases in file completetion
 (setq completion-ignore-case t)
