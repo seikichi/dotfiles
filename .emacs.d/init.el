@@ -250,7 +250,6 @@
 (define-key helm-command-map (kbd "l") 'helm-ls-git-ls)
 (define-key helm-command-map (kbd "o") 'helm-occur)
 (define-key helm-command-map (kbd "r") 'helm-resume)
-(define-key helm-command-map (kbd "s") 'helm-yas-complete)
 (define-key helm-command-map (kbd "t") 'my/helm-etags-select)
 (define-key helm-command-map (kbd "y") 'helm-show-kill-ring)
 
@@ -380,12 +379,6 @@
 (defun helm-robe-completing-read (prompt choices &optional predicate require-match)
   (let ((collection (mapcar (lambda (c) (if (listp c) (car c) c)) choices)))
     (helm-comp-read prompt collection :test predicate :must-match require-match)))
-
-;; powerline
-(powerline-default-theme)
-
-;; yasnippet
-(yas-global-mode)
 
 ;; local
 (if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
