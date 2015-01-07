@@ -440,8 +440,18 @@
 ;; Java/Groovy
 (add-to-list 'auto-mode-alist '("\\.gradle" . groovy-mode))
 
+(require 'ajc-java-complete-config)
+(add-hook 'java-mode-hook 'ajc-java-complete-mode)
+
 ;; PlantUML
 (setq plantuml-jar-path (expand-file-name "~/dotfiles/bin/plantuml.jar"))
 (setq plantuml-java-options "")
 (setq plantuml-options "-charset UTF-8")
 (add-to-list 'auto-mode-alist '("\\.plantuml$" . plantuml-mode))
+
+;; Web Mode
+(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(setq web-mode-markup-indent-offset 2)
+(setq web-mode-css-indent-offset 2)
+(setq web-mode-code-indent-offset 2)
