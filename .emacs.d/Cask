@@ -3,10 +3,10 @@
 (source melpa)
 (source marmalade)
 
-(depends-on "ace-jump-mode")
 (depends-on "ag")
 (depends-on "anzu")
 (depends-on "auto-complete")
+(depends-on "avy")
 (depends-on "color-theme")
 (depends-on "expand-region")
 (depends-on "flycheck")

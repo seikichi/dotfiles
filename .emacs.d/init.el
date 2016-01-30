@@ -367,9 +367,9 @@
 (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
 
 ;; ace-jump-mode
-(global-set-key (kbd "M-j") 'ace-jump-mode)
-;; (global-set-key (kbd "C-M-j") 'ace-jump-char-mode)
-;; (global-set-key (kbd "C-M-J") 'ace-jump-line-mode)
+(global-set-key (kbd "M-j") 'avy-goto-word-1)
+(global-set-key (kbd "C-M-j") 'avy-goto-char)
+;; (global-set-key (kbd "C-M-J") 'avy-goto-line)
 
 ;; use helm in robe
 ;; http://d.hatena.ne.jp/syohex/20131222/1387722542
