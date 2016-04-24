@@ -71,6 +71,8 @@ alias ll="ls -lh --color=auto"
 alias ls="ls --color=auto"
 alias df="df -h"
 alias e=$EDITOR
+alias tree="tree -C"
+alias ltree="tree -lpshDFC"
 # sudo
 alias sudo='sudo '
 # pipe
