@@ -74,9 +74,10 @@ alias e=$EDITOR
 # sudo
 alias sudo='sudo '
 # pipe
-alias -g L='| lv -c'
-alias -g L12=' 2>&1 | lv -c'
-alias -g L2=' 2>&1 1>/dev/null | lv -c'
+alias -g L='| less -c'
+alias -g L12=' 2>&1 | less -c'
+alias -g L2=' 2>&1 1>/dev/null | less -c'
+alias -g P='pygmentize -O encoding=utf-8 -O style=fruity -f console256 -g '
 alias -g H='| head'
 alias -g T='| tail'
 alias -g G='| grep'
