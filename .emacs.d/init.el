@@ -194,14 +194,20 @@
 (set-face-background 'linum "#2f2f2f")
 
 ;; ==================================================
-;; Auto Complete
+;; Company
 ;; ==================================================
-(ac-config-default)
-(global-set-key "\M-o" 'auto-complete)
-(setq ac-auto-start nil)
-(setq ac-ignore-case nil)
-(setq ac-quick-help-delay 0.2)
-;; (setq ac-auto-show-menu nil)
+(global-company-mode +1)
+(custom-set-variables '(company-idle-delay nil))
+
+(set-face-attribute 'company-tooltip nil :foreground "black" :background "lightgrey")
+(set-face-attribute 'company-tooltip-common nil :foreground "black" :background "lightgrey")
+(set-face-attribute 'company-tooltip-common-selection nil :foreground "white" :background "steelblue")
+(set-face-attribute 'company-tooltip-selection nil :foreground "black" :background "steelblue")
+(set-face-attribute 'company-preview-common nil :background nil :foreground "lightgrey" :underline t)
+(set-face-attribute 'company-scrollbar-fg nil :background "orange")
+(set-face-attribute 'company-scrollbar-bg nil :background "gray40")
+
+(global-set-key (kbd "M-o") 'company-complete)
 
 ;; ==================================================
 ;; Helm
@@ -309,16 +315,11 @@
 ;; ==================================================
 ;; Misc.
 ;; ==================================================
-;; popwin
-(require 'popwin)
-(setq display-buffer-function 'popwin:display-buffer)
-(push '("^\*helm .+\*$" :regexp t) popwin:special-display-config)
 
 ;; git-gutter
 (require 'git-gutter)
 (global-git-gutter-mode t)
 (git-gutter:linum-setup)
-
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
@@ -330,23 +331,11 @@
 
 ;; quick run
 (require 'quickrun)
-;; (push '("*quickrun*") popwin:special-display-config)
 (global-set-key (kbd "C-q !") 'quickrun)
 
 ;; uniquify
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
-
-;; ag
-(require 'ag)
-(custom-set-variables
- '(ag-highlight-search t)
- '(ag-reuse-window 'nil)
- '(ag-reuse-buffers 'nil))
-(require 'wgrep-ag)
-(autoload 'wgrep-ag-setup "wgrep-ag")
-(add-hook 'ag-mode-hook 'wgrep-ag-setup)
-(define-key ag-mode-map (kbd "e") 'wgrep-change-to-wgrep-mode)
 
 ;; add +x to files that start with "#!"
 (add-hook 'after-save-hook
@@ -366,19 +355,10 @@
 (global-set-key (kbd "M-%") 'anzu-query-replace)
 (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
 
-;; ace-jump-mode
+;; avy
 (global-set-key (kbd "M-j") 'avy-goto-word-1)
 (global-set-key (kbd "C-M-j") 'avy-goto-char)
 ;; (global-set-key (kbd "C-M-J") 'avy-goto-line)
-
-;; use helm in robe
-;; http://d.hatena.ne.jp/syohex/20131222/1387722542
-(custom-set-variables
- '(robe-completing-read-func 'helm-robe-completing-read))
-
-(defun helm-robe-completing-read (prompt choices &optional predicate require-match)
-  (let ((collection (mapcar (lambda (c) (if (listp c) (car c) c)) choices)))
-    (helm-comp-read prompt collection :test predicate :must-match require-match)))
 
 ;; local
 (if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
@@ -390,11 +370,18 @@
 (setq js-indent-level 2)
 
 ;; TypeScript
+(require 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
-(autoload 'typescript-mode "TypeScript" "Major mode for editing typescript." t)
-(setq typescript-indent-level 2)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+
+(require 'tide)
 (add-hook 'typescript-mode-hook
-          (lambda () (define-key typescript-mode-map (kbd "M-.") 'find-tag)))
+          (lambda ()
+            (tide-setup)
+            (flycheck-mode t)
+            (setq flycheck-check-syntax-automatically '(save mode-enabled))
+            (eldoc-mode t)
+            (company-mode-on)))
 
 ;; SCSS
 (add-hook 'scss-mode-hook
@@ -418,13 +405,7 @@
 (add-to-list 'auto-mode-alist '("Cheffile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
 
-(add-hook 'ruby-mode-hook 'robe-mode)
-(add-hook 'robe-mode-hook 'ac-robe-setup)
-
 ;; Go
-(require 'go-autocomplete)
-(load "~/go/src/code.google.com/p/go.tools/refactor/rename/rename.el")
-;; (load "~/go/src/code.google.com/p/go.tools/cmd/oracle/oracle.el")
 (add-hook 'go-mode-hook 'go-eldoc-setup)
 (add-hook 'before-save-hook 'gofmt-before-save)
 (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
@@ -440,9 +421,6 @@
 ;; Java/Groovy
 (add-to-list 'auto-mode-alist '("\\.gradle" . groovy-mode))
 
-(require 'ajc-java-complete-config)
-(add-hook 'java-mode-hook 'ajc-java-complete-mode)
-
 ;; PlantUML
 (setq plantuml-jar-path (expand-file-name "~/dotfiles/bin/plantuml.jar"))
 (setq plantuml-java-options "")
@@ -455,3 +433,7 @@
 (setq web-mode-markup-indent-offset 2)
 (setq web-mode-css-indent-offset 2)
 (setq web-mode-code-indent-offset 2)
+
+;; PEG.js
+(add-to-list 'auto-mode-alist '("\\.pegjs$" . javascript-mode))
+(add-to-list 'auto-mode-alist '("\\.pegjs.mustache$" . javascript-mode))
