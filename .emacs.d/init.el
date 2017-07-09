@@ -4,6 +4,8 @@
 ;; Author: seikichi@kmc.gr.jp
 ;; ==================================================
 
+(package-initialize)
+
 ;; ==================================================
 ;; Cask
 ;; ==================================================
@@ -364,15 +366,34 @@
 (if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
 
 ;; ==================================================
+;; Hydra
+;; ==================================================
+
+(defhydra hydra-yank-pop ()
+  "yank"
+  ("C-y" yank nil)
+  ("M-y" yank-pop nil)
+  ("y" (yank-pop 1) "next")
+  ("Y" (yank-pop -1) "prev")
+  ("l" helm-show-kill-ring "list" :color blue))
+(global-set-key (kbd "C-y") #'hydra-yank-pop/yank)
+;; (global-set-key (kbd "M-y") #'hydra-yank-pop/yank-pop)
+
+;; ==================================================
 ;; Prog Modes
 ;; ==================================================
 ;; Javascript
 (setq js-indent-level 2)
 
+(require 'prettier-js)
+(setq prettier-js-args '("--single-quote" "--trailing-comma" "all"))
+
 ;; TypeScript
 (require 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+(setq typescript-indent-level 2)
+(add-hook 'typescript-mode-hook 'prettier-js-mode)
 
 (require 'tide)
 (add-hook 'typescript-mode-hook
@@ -437,3 +458,13 @@
 ;; PEG.js
 (add-to-list 'auto-mode-alist '("\\.pegjs$" . javascript-mode))
 (add-to-list 'auto-mode-alist '("\\.pegjs.mustache$" . javascript-mode))
+
+;; Java
+(require 'meghanada)
+(add-hook 'java-mode-hook
+          (lambda ()
+            ;; meghanada-mode on
+            (meghanada-mode t)
+            (setq c-basic-offset 2)
+            ;; use code format
+            (add-hook 'before-save-hook 'meghanada-code-beautify-before-save)))

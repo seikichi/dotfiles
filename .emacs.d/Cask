@@ -3,6 +3,7 @@
 (source melpa)
 
 (depends-on "ag")
+(depends-on "alchemist")
 (depends-on "anzu")
 (depends-on "avy")
 (depends-on "color-theme")
@@ -20,6 +21,7 @@
 (depends-on "helm-ls-git")
 (depends-on "highlight-symbol")
 (depends-on "howm")
+(depends-on "hydra")
 (depends-on "linum-off")
 (depends-on "multiple-cursors")
 (depends-on "quickrun")
@@ -32,6 +34,7 @@
 ;; prog modes
 (depends-on "coffee-mode")
 (depends-on "dockerfile-mode")
+(depends-on "elixir-mode")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
 (depends-on "go-mode")
@@ -54,3 +57,5 @@
 (depends-on "typescript-mode")
 (depends-on "web-mode")
 (depends-on "yaml-mode")
+(depends-on "prettier-js")
+(depends-on "meghanada")
