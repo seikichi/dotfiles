@@ -250,7 +250,6 @@
 (global-set-key (kbd "M-x")   'helm-M-x)
 ;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
-(define-key helm-command-map (kbd "a") 'helm-ag)
 (define-key helm-command-map (kbd "d") 'helm-descbinds)
 (define-key helm-command-map (kbd "f") 'helm-flycheck)
 (define-key helm-command-map (kbd "g") 'helm-git-grep)
@@ -260,11 +259,6 @@
 (define-key helm-command-map (kbd "r") 'helm-resume)
 (define-key helm-command-map (kbd "t") 'my/helm-etags-select)
 (define-key helm-command-map (kbd "y") 'helm-show-kill-ring)
-
-(if (eq system-type 'darwin)
-    (progn
-      (define-key helm-command-map (kbd "m") 'helm-dash)
-      (define-key helm-command-map (kbd ".") 'helm-dash-at-point)))
 
 ;; key settings for helm
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
@@ -279,6 +273,8 @@
 (require 'howm)
 (setq howm-menu-lang 'ja)
 (setq howm-directory "~/Dropbox/howm")
+(setq howm-view-use-grep t)
+(setq howm-process-coding-system 'utf-8-unix)
 
 ;; ==================================================
 ;; Undo
@@ -309,11 +305,6 @@
 (define-key region-bindings-mode-map "h" 'mc-hide-unmatched-lines-mode)
 (define-key mc/keymap (kbd "C-c h") 'mc-hide-unmatched-lines-mode)
 
-;; expand-region
-(require 'expand-region)
-(global-set-key (kbd "M-@") 'er/expand-region)
-(global-set-key (kbd "M-`") 'er/contract-region)
-
 ;; ==================================================
 ;; Misc.
 ;; ==================================================
@@ -331,10 +322,6 @@
 ;; auto revert
 (global-auto-revert-mode 1)
 
-;; quick run
-(require 'quickrun)
-(global-set-key (kbd "C-q !") 'quickrun)
-
 ;; uniquify
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -350,12 +337,6 @@
                          (let ((mode (file-modes name)))
                            (set-file-modes name (logior mode (logand (/ mode 4) 73)))
                            (message (concat "Wrote " name " (+x)")))))))))
-
-;; anzu
-(global-anzu-mode t)
-(setq anzu-search-threshold 1000)
-(global-set-key (kbd "M-%") 'anzu-query-replace)
-(global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
 
 ;; avy
 (global-set-key (kbd "M-j") 'avy-goto-word-1)
@@ -385,36 +366,12 @@
 ;; Javascript
 (setq js-indent-level 2)
 
-(require 'prettier-js)
-(setq prettier-js-args '("--single-quote" "--trailing-comma" "all"))
-
 ;; TypeScript
 (require 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
 (setq typescript-indent-level 2)
 (add-hook 'typescript-mode-hook 'prettier-js-mode)
-
-(require 'tide)
-(add-hook 'typescript-mode-hook
-          (lambda ()
-            (tide-setup)
-            (flycheck-mode t)
-            (setq flycheck-check-syntax-automatically '(save mode-enabled))
-            (eldoc-mode t)
-            (company-mode-on)))
-
-;; SCSS
-(add-hook 'scss-mode-hook
-          (lambda ()
-            (setq css-indent-offset 2)
-            (setq scss-compile-at-save nil)))
-
-;; Scala
-(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
-
-;; Lisp
-(add-to-list 'auto-mode-alist '("Cask" . lisp-mode))
 
 ;; Ruby
 (add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
@@ -427,7 +384,6 @@
 (add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
 
 ;; Go
-(add-hook 'go-mode-hook 'go-eldoc-setup)
 (add-hook 'before-save-hook 'gofmt-before-save)
 (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
 (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "C-c C-i") 'go-impl)))
@@ -436,17 +392,10 @@
 (set-face-attribute 'eldoc-highlight-function-argument
                     nil :underline t :foreground "#7F9F7F" :weight 'bold)
 (setq gofmt-command "goimports")
-(font-lock-add-keywords
- 'go-mode '(("\\b\\(err\\)\\b" 1 '((:foreground "#7F9F7F") (:weight bold)) t)))
+(font-lock-add-keywords 'go-mode '(("\\b\\(err\\)\\b" 1 '((:foreground "#7F9F7F") (:weight bold)) t)))
 
 ;; Java/Groovy
 (add-to-list 'auto-mode-alist '("\\.gradle" . groovy-mode))
-
-;; PlantUML
-(setq plantuml-jar-path (expand-file-name "~/dotfiles/bin/plantuml.jar"))
-(setq plantuml-java-options "")
-(setq plantuml-options "-charset UTF-8")
-(add-to-list 'auto-mode-alist '("\\.plantuml$" . plantuml-mode))
 
 ;; Web Mode
 (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
@@ -454,17 +403,3 @@
 (setq web-mode-markup-indent-offset 2)
 (setq web-mode-css-indent-offset 2)
 (setq web-mode-code-indent-offset 2)
-
-;; PEG.js
-(add-to-list 'auto-mode-alist '("\\.pegjs$" . javascript-mode))
-(add-to-list 'auto-mode-alist '("\\.pegjs.mustache$" . javascript-mode))
-
-;; Java
-(require 'meghanada)
-(add-hook 'java-mode-hook
-          (lambda ()
-            ;; meghanada-mode on
-            (meghanada-mode t)
-            (setq c-basic-offset 2)
-            ;; use code format
-            (add-hook 'before-save-hook 'meghanada-code-beautify-before-save)))
