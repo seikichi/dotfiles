@@ -21,8 +21,6 @@
 (depends-on "zenburn-theme")
 
 ;; prog
-(depends-on "tide")
-
 (depends-on "dockerfile-mode")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
@@ -34,6 +32,11 @@
 (depends-on "lua-mode")
 (depends-on "markdown-mode")
 (depends-on "ruby-mode")
+(depends-on "rust-mode")
 (depends-on "typescript-mode")
 (depends-on "web-mode")
 (depends-on "yaml-mode")
+
+;; Rust
+(depends-on "racer")
+(depends-on "flycheck-rust")
