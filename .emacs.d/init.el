@@ -4,8 +4,6 @@
 ;; Author: seikichi@kmc.gr.jp
 ;; ==================================================
 
-(package-initialize)
-
 ;; ==================================================
 ;; el-get
 ;; ==================================================
@@ -56,6 +54,8 @@
 ;; Rust
 (el-get-bundle racer)
 (el-get-bundle flycheck-rust)
+
+(package-initialize)
 
 ;; ==================================================
 ;; Server
@@ -179,6 +179,11 @@
 ;; ==================================================
 ;; Looks
 ;; ==================================================
+
+(if (display-graphic-p)
+    (progn (menu-bar-mode 0)
+           (toggle-scroll-bar 0)
+           (tool-bar-mode 0)))
 
 (blink-cursor-mode 0)
 (menu-bar-mode 0)
