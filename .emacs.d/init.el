@@ -7,10 +7,55 @@
 (package-initialize)
 
 ;; ==================================================
-;; Cask
+;; el-get
 ;; ==================================================
-(require 'cask "~/.cask/cask.el")
-(cask-initialize)
+(add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(el-get-bundle avy)
+(el-get-bundle color-theme)
+(el-get-bundle company)
+(el-get-bundle flycheck)
+(el-get-bundle git-gutter)
+(el-get-bundle helm)
+(el-get-bundle helm-descbinds)
+(el-get-bundle helm-flycheck)
+(el-get-bundle helm-git-grep)
+(el-get-bundle helm-ls-git)
+(el-get-bundle highlight-symbol)
+(el-get-bundle howm)
+(el-get-bundle hydra)
+(el-get-bundle linum-off)
+(el-get-bundle multiple-cursors)
+(el-get-bundle region-bindings-mode)
+(el-get-bundle undo-tree)
+(el-get-bundle zenburn-theme)
+
+;; prog
+(el-get-bundle dockerfile-mode)
+(el-get-bundle gitconfig-mode)
+(el-get-bundle gitignore-mode)
+(el-get-bundle go-mode)
+(el-get-bundle graphviz-dot-mode)
+(el-get-bundle groovy-mode)
+(el-get-bundle json-mode)
+(el-get-bundle less-css-mode)
+(el-get-bundle lua-mode)
+(el-get-bundle markdown-mode)
+(el-get-bundle ruby-mode)
+(el-get-bundle rust-mode)
+(el-get-bundle typescript-mode)
+(el-get-bundle web-mode)
+(el-get-bundle yaml-mode)
+
+;; Rust
+(el-get-bundle racer)
+(el-get-bundle flycheck-rust)
 
 ;; ==================================================
 ;; Server
@@ -192,7 +237,7 @@
 ;; ==================================================
 ;; Thema
 ;; ==================================================
-(load-theme 'zenburn t)
+(require 'zenburn-theme)
 (set-face-background 'linum "#2f2f2f")
 
 ;; ==================================================
