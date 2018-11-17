@@ -213,15 +213,8 @@
 (setq c-basic-offset 2)
 
 ;; show line number
-(require 'linum-off)
-(global-linum-mode t)
-(setq linum-format "%4d: ")
-(global-set-key "\C-cl" 'linum-mode)
-(setq linum-delay t)
-(defadvice linum-schedule (around my-linum-schedule () activate)
-  (run-with-idle-timer 0.2 nil #'linum-update-current))
-
-(setq text-mode-hook 'turn-off-auto-fill)
+(global-display-line-numbers-mode t)
+(setq display-line-numbers "%4d: ")
 
 ;; truncate
 (set-default 'truncate-lines t)
@@ -238,7 +231,6 @@
 ;; Thema
 ;; ==================================================
 (require 'zenburn-theme)
-(set-face-background 'linum "#2f2f2f")
 
 ;; ==================================================
 ;; Company
@@ -355,9 +347,8 @@
 ;; ==================================================
 
 ;; git-gutter
-(require 'git-gutter)
 (global-git-gutter-mode t)
-(git-gutter:linum-setup)
+
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
