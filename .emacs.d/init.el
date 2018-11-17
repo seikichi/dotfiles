@@ -18,6 +18,7 @@
 (el-get-bundle avy)
 (el-get-bundle color-theme)
 (el-get-bundle company)
+(el-get-bundle eglot)
 (el-get-bundle flycheck)
 (el-get-bundle git-gutter)
 (el-get-bundle helm)
