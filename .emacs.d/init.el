@@ -20,6 +20,7 @@
 (el-get-bundle company)
 (el-get-bundle eglot)
 (el-get-bundle flycheck)
+(el-get-bundle flycheck-rust)
 (el-get-bundle git-gutter)
 (el-get-bundle helm)
 (el-get-bundle helm-descbinds)
@@ -428,3 +429,5 @@
 
 ;; Rust
 (setq rust-format-on-save t)
+(with-eval-after-load 'rust-mode
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
