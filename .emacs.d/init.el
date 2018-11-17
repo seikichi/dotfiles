@@ -28,8 +28,6 @@
 (el-get-bundle helm-ls-git)
 (el-get-bundle highlight-symbol)
 (el-get-bundle howm)
-(el-get-bundle hydra)
-(el-get-bundle linum-off)
 (el-get-bundle multiple-cursors)
 (el-get-bundle region-bindings-mode)
 (el-get-bundle undo-tree)
@@ -51,10 +49,6 @@
 (el-get-bundle typescript-mode)
 (el-get-bundle web-mode)
 (el-get-bundle yaml-mode)
-
-;; Rust
-(el-get-bundle racer)
-(el-get-bundle flycheck-rust)
 
 (package-initialize)
 
