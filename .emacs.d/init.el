@@ -383,20 +383,6 @@
 (if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
 
 ;; ==================================================
-;; Hydra
-;; ==================================================
-
-(defhydra hydra-yank-pop ()
-  "yank"
-  ("C-y" yank nil)
-  ("M-y" yank-pop nil)
-  ("y" (yank-pop 1) "next")
-  ("Y" (yank-pop -1) "prev")
-  ("l" helm-show-kill-ring "list" :color blue))
-(global-set-key (kbd "C-y") #'hydra-yank-pop/yank)
-;; (global-set-key (kbd "M-y") #'hydra-yank-pop/yank-pop)
-
-;; ==================================================
 ;; Prog Modes
 ;; ==================================================
 ;; Javascript
@@ -442,8 +428,3 @@
 
 ;; Rust
 (setq rust-format-on-save t)
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'racer-mode-hook #'eldoc-mode)
-
-(with-eval-after-load 'rust-mode
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
