@@ -18,7 +18,9 @@
 (el-get-bundle avy)
 (el-get-bundle color-theme)
 (el-get-bundle company)
+(el-get-bundle eglot)
 (el-get-bundle flycheck)
+(el-get-bundle flycheck-rust)
 (el-get-bundle git-gutter)
 (el-get-bundle helm)
 (el-get-bundle helm-descbinds)
@@ -27,8 +29,6 @@
 (el-get-bundle helm-ls-git)
 (el-get-bundle highlight-symbol)
 (el-get-bundle howm)
-(el-get-bundle hydra)
-(el-get-bundle linum-off)
 (el-get-bundle multiple-cursors)
 (el-get-bundle region-bindings-mode)
 (el-get-bundle undo-tree)
@@ -50,10 +50,6 @@
 (el-get-bundle typescript-mode)
 (el-get-bundle web-mode)
 (el-get-bundle yaml-mode)
-
-;; Rust
-(el-get-bundle racer)
-(el-get-bundle flycheck-rust)
 
 (package-initialize)
 
@@ -218,15 +214,8 @@
 (setq c-basic-offset 2)
 
 ;; show line number
-(require 'linum-off)
-(global-linum-mode t)
-(setq linum-format "%4d: ")
-(global-set-key "\C-cl" 'linum-mode)
-(setq linum-delay t)
-(defadvice linum-schedule (around my-linum-schedule () activate)
-  (run-with-idle-timer 0.2 nil #'linum-update-current))
-
-(setq text-mode-hook 'turn-off-auto-fill)
+(global-display-line-numbers-mode t)
+(setq display-line-numbers "%4d: ")
 
 ;; truncate
 (set-default 'truncate-lines t)
@@ -243,7 +232,6 @@
 ;; Thema
 ;; ==================================================
 (require 'zenburn-theme)
-(set-face-background 'linum "#2f2f2f")
 
 ;; ==================================================
 ;; Company
@@ -360,9 +348,8 @@
 ;; ==================================================
 
 ;; git-gutter
-(require 'git-gutter)
 (global-git-gutter-mode t)
-(git-gutter:linum-setup)
+
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
@@ -395,20 +382,6 @@
 
 ;; local
 (if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
-
-;; ==================================================
-;; Hydra
-;; ==================================================
-
-(defhydra hydra-yank-pop ()
-  "yank"
-  ("C-y" yank nil)
-  ("M-y" yank-pop nil)
-  ("y" (yank-pop 1) "next")
-  ("Y" (yank-pop -1) "prev")
-  ("l" helm-show-kill-ring "list" :color blue))
-(global-set-key (kbd "C-y") #'hydra-yank-pop/yank)
-;; (global-set-key (kbd "M-y") #'hydra-yank-pop/yank-pop)
 
 ;; ==================================================
 ;; Prog Modes
@@ -456,8 +429,5 @@
 
 ;; Rust
 (setq rust-format-on-save t)
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'racer-mode-hook #'eldoc-mode)
-
 (with-eval-after-load 'rust-mode
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
