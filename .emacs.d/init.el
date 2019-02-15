@@ -45,6 +45,7 @@
 (el-get-bundle less-css-mode)
 (el-get-bundle lua-mode)
 (el-get-bundle markdown-mode)
+(el-get-bundle rjsx-mode)
 (el-get-bundle ruby-mode)
 (el-get-bundle rust-mode)
 (el-get-bundle typescript-mode)
@@ -448,7 +449,8 @@
 (add-to-list 'auto-mode-alist '("\\.gradle" . groovy-mode))
 
 ;; Web Mode
-(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx$" . rjsx-mode))
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
 (setq web-mode-markup-indent-offset 2)
 (setq web-mode-css-indent-offset 2)
