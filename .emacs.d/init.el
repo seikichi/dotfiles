@@ -322,7 +322,7 @@
 ;; ==================================================
 (require 'undo-tree)
 (global-undo-tree-mode t)
-(setq undo-tree-auto-save-history t)
+;; (setq undo-tree-auto-save-history t)
 
 ;; ==================================================
 ;; multiple-cursor
