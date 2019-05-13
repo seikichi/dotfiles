@@ -280,7 +280,11 @@
 ;; set helm-command-prefix-key to "C-q"
 (global-set-key (kbd "C-c q") 'quoted-insert)
 (global-unset-key (kbd "C-q"))
-(custom-set-variables '(helm-command-prefix-key "C-q"))
+(global-set-key (kbd "C-q") 'helm-command-prefix)
+
+;; Use ripgrep
+(setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s")
+(setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'"))
 
 ;; key settings
 (global-set-key (kbd "C-x b") 'helm-mini)
