@@ -20,11 +20,9 @@
 (el-get-bundle company)
 (el-get-bundle eglot)
 (el-get-bundle flycheck)
-(el-get-bundle flycheck-rust)
 (el-get-bundle git-gutter)
 (el-get-bundle helm)
 (el-get-bundle helm-descbinds)
-(el-get-bundle helm-flycheck)
 (el-get-bundle helm-git-grep)
 (el-get-bundle helm-ls-git)
 (el-get-bundle highlight-symbol)
@@ -47,10 +45,10 @@
 (el-get-bundle markdown-mode)
 (el-get-bundle rjsx-mode)
 (el-get-bundle ruby-mode)
-(el-get-bundle rust-mode)
 (el-get-bundle typescript-mode)
 (el-get-bundle web-mode)
 (el-get-bundle yaml-mode)
+(el-get-bundle rustic)
 
 (package-initialize)
 
@@ -238,7 +236,7 @@
 ;; Company
 ;; ==================================================
 (global-company-mode +1)
-(custom-set-variables '(company-idle-delay nil))
+(setq company-idle-delay nil)
 
 (set-face-attribute 'company-tooltip nil :foreground "black" :background "lightgrey")
 (set-face-attribute 'company-tooltip-common nil :foreground "black" :background "lightgrey")
@@ -430,6 +428,7 @@
 (setq web-mode-code-indent-offset 2)
 
 ;; Rust
-(setq rust-format-on-save t)
-(with-eval-after-load 'rust-mode
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+(setq rustic-rls-pkg 'eglot)
+(cl-delete-if (lambda (element) (equal (cdr element) 'rust-mode)) auto-mode-alist)
+(cl-delete-if (lambda (element) (equal (cdr element) 'rustic-mode)) auto-mode-alist)
+(add-to-list 'auto-mode-alist '("\\.rs$" . rustic-mode))
