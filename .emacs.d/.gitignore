@@ -10,3 +10,8 @@ tramp
 semanticdb
 srecode-map.el
 meghanada/
+.lsp-*
+el-get
+elpa
+network-security.data
+recentf
