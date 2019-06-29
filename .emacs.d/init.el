@@ -18,7 +18,6 @@
 (el-get-bundle avy)
 (el-get-bundle color-theme)
 (el-get-bundle company)
-(el-get-bundle eglot)
 (el-get-bundle flycheck)
 (el-get-bundle git-gutter)
 (el-get-bundle helm)
@@ -31,6 +30,10 @@
 (el-get-bundle region-bindings-mode)
 (el-get-bundle undo-tree)
 (el-get-bundle zenburn-theme)
+
+;; lsp
+(el-get-bundle lsp-mode)
+(el-get-bundle company-lsp)
 
 ;; prog
 (el-get-bundle dockerfile-mode)
@@ -389,6 +392,9 @@
 ;; History
 (setq backup-directory-alist '((".*" . "~/.ehist")))
 
+;; LSP
+(setq lsp-enable-snippet nil)
+
 ;; ==================================================
 ;; Prog Modes
 ;; ==================================================
@@ -435,7 +441,6 @@
 (setq web-mode-code-indent-offset 2)
 
 ;; Rust
-(setq rustic-rls-pkg 'eglot)
 (cl-delete-if (lambda (element) (equal (cdr element) 'rust-mode)) auto-mode-alist)
 (cl-delete-if (lambda (element) (equal (cdr element) 'rustic-mode)) auto-mode-alist)
 (add-to-list 'auto-mode-alist '("\\.rs$" . rustic-mode))
