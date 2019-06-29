@@ -386,6 +386,9 @@
 ;; local
 (if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
 
+;; History
+(setq backup-directory-alist '((".*" . "~/.ehist")))
+
 ;; ==================================================
 ;; Prog Modes
 ;; ==================================================
