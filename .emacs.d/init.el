@@ -325,7 +325,6 @@
 ;; ==================================================
 (require 'undo-tree)
 (global-undo-tree-mode t)
-;; (setq undo-tree-auto-save-history t)
 
 ;; ==================================================
 ;; multiple-cursor
@@ -391,6 +390,10 @@
 
 ;; History
 (setq backup-directory-alist '((".*" . "~/.ehist")))
+(setq undo-tree-auto-save-history nil)
+(setq auto-save-default nil)
+(setq auto-save-list-file-prefix nil)
+(setq create-lockfiles nil)
 
 ;; LSP
 (setq lsp-enable-snippet nil)
