@@ -27,6 +27,7 @@
 (el-get-bundle highlight-symbol)
 (el-get-bundle howm)
 (el-get-bundle multiple-cursors)
+(el-get-bundle prettier-js)
 (el-get-bundle region-bindings-mode)
 (el-get-bundle undo-tree)
 (el-get-bundle zenburn-theme)
