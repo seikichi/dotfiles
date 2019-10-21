@@ -9,6 +9,7 @@
 export LANG=ja_JP.UTF-8
 export OUTPUT_CHARSET=utf-8
 export EDITOR="env TERM=xterm-256color emacsclient -t"
+export BAT_THEME=zenburn
 
 ## prompt
 PROMPT="%m:%n%% "
@@ -79,6 +80,9 @@ alias -g T='| tail'
 alias -g G='| grep'
 alias -g V='| grep -v'
 alias -g W='| wc'
+alias -g B='| bat'
+alias -g B12=' 2>&1 | bat'
+alias -g B2=' 2>&1 1>/dev/null | bat'
 
 # ..
 alias -g '...'='../..'
