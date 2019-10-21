@@ -37,6 +37,7 @@
 (el-get-bundle company-lsp)
 
 ;; prog
+(el-get-bundle adoc-mode)
 (el-get-bundle dockerfile-mode)
 (el-get-bundle gitconfig-mode)
 (el-get-bundle gitignore-mode)
@@ -451,3 +452,6 @@
 (cl-delete-if (lambda (element) (equal (cdr element) 'rust-mode)) auto-mode-alist)
 (cl-delete-if (lambda (element) (equal (cdr element) 'rustic-mode)) auto-mode-alist)
 (add-to-list 'auto-mode-alist '("\\.rs$" . rustic-mode))
+
+;; adoc
+(add-to-list 'auto-mode-alist '("\\.adoc$" . adoc-mode))
