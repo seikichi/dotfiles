@@ -29,7 +29,8 @@
 (el-get-bundle multiple-cursors)
 (el-get-bundle prettier-js)
 (el-get-bundle region-bindings-mode)
-(el-get-bundle undo-tree)
+(el-get-bundle queue)
+(el-get-bundle undo-tree :url "https://gitlab.com/tsc25/undo-tree.git")
 (el-get-bundle zenburn-theme)
 
 ;; lsp
