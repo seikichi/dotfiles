@@ -125,3 +125,14 @@ add-zsh-hook chpwd chpwd_recent_dirs
 zstyle ':chpwd:*' recent-dirs-max 5000
 zstyle ':chpwd:*' recent-dirs-default yes
 zstyle ':completion:*' recent-dirs-insert both
+
+# for DevContainer
+if [[ -n "${DEV_CONTAINER:-}" ]]; then
+    PROMPT_COMMAND='history -a'
+    HISTFILE=/zsh-history/.zsh_history
+fi
+
+# mise
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh)"
+fi
