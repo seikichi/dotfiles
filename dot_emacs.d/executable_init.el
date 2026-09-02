@@ -1,458 +1,163 @@
-;; ==================================================
-;; $HOME/.emacs.d/init.el
-;;
-;; Author: seikichi@kmc.gr.jp
-;; ==================================================
+;;; init.el --- Emacs 31 minimal config -*- lexical-binding: t -*-
+(when (version< emacs-version "31")
+  (error "This init.el requires Emacs 31 or later (running %s)" emacs-version))
 
-;; ==================================================
-;; el-get
-;; ==================================================
-(add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+;;;; パッケージ: 組み込み use-package + package-vc。全て Git コミットで固定する
+(setq package-archives nil        ; ELPA/MELPA は使わない (未固定の取得経路を塞ぐ)
+      custom-file (locate-user-emacs-file "custom.el"))
+(load custom-file :no-error :no-message)
 
-(el-get-bundle avy)
-(el-get-bundle color-theme)
-(el-get-bundle company)
-(el-get-bundle flycheck)
-(el-get-bundle git-gutter)
-(el-get-bundle helm)
-(el-get-bundle helm-descbinds)
-(el-get-bundle helm-git-grep)
-(el-get-bundle helm-ls-git)
-(el-get-bundle highlight-symbol)
-(el-get-bundle howm)
-(el-get-bundle multiple-cursors)
-(el-get-bundle prettier-js)
-(el-get-bundle region-bindings-mode)
-(el-get-bundle queue)
-(el-get-bundle undo-tree :url "https://gitlab.com/tsc25/undo-tree.git")
-(el-get-bundle zenburn-theme)
+(use-package avy
+  :vc (:url "https://github.com/abo-abo/avy"
+       :rev "933d1f36cca0f71e4acb5fac707e9ae26c536264") ; master 2026-09-02 時点
+  :bind (("M-j"   . avy-goto-word-1)
+         ("C-M-j" . avy-goto-char)))
 
-;; lsp
-(el-get-bundle lsp-mode)
-(el-get-bundle company-lsp)
+(use-package multiple-cursors
+  :vc (:url "https://github.com/magnars/multiple-cursors.el"
+       :rev "94b8b07a4bab87f803123723b68227565429dfa1")) ; master 2026-09-02 時点
 
-;; prog
-(el-get-bundle adoc-mode)
-(el-get-bundle dockerfile-mode)
-(el-get-bundle gitconfig-mode)
-(el-get-bundle gitignore-mode)
-(el-get-bundle go-mode)
-(el-get-bundle graphviz-dot-mode)
-(el-get-bundle groovy-mode)
-(el-get-bundle json-mode)
-(el-get-bundle less-css-mode)
-(el-get-bundle lua-mode)
-(el-get-bundle markdown-mode)
-(el-get-bundle rjsx-mode)
-(el-get-bundle ruby-mode)
-(el-get-bundle typescript-mode)
-(el-get-bundle web-mode)
-(el-get-bundle yaml-mode)
-(el-get-bundle rustic)
+;; リージョン選択中だけ有効な 1 キー操作 (旧 region-bindings-mode 相当)
+(defvar-keymap my/region-map
+  "a" #'mc/mark-all-like-this
+  "d" #'mc/mark-all-dwim
+  "n" #'mc/mark-next-like-this
+  "p" #'mc/mark-previous-like-this
+  "N" #'mc/mark-previous-like-this
+  "m" #'mc/mark-more-like-this-extended
+  "u" #'mc/unmark-next-like-this
+  "U" #'mc/unmark-previous-like-this
+  "s" #'mc/skip-to-next-like-this
+  "S" #'mc/skip-to-previous-like-this
+  "i" #'mc/insert-numbers
+  "l" #'mc/edit-lines
+  "h" #'mc-hide-unmatched-lines-mode)
+(add-to-list 'emulation-mode-map-alists `((mark-active . ,my/region-map)))
 
-(package-initialize)
+;;;; Tree-sitter: grammar もコミット固定 (Emacs 31 の各 ts-mode が動作確認済みの版)
+;; いずれも ABI 14 で生成済み (このビルドの libtree-sitter 0.20 が受け付ける上限)
+(setq treesit-language-source-alist
+      '((markdown        "https://github.com/tree-sitter-grammars/tree-sitter-markdown" ; v0.4.1
+                         :commit "413285231ce8fa8b11e7074bbe265b48aa7277f9"
+                         :source-dir "tree-sitter-markdown/src")
+        (markdown-inline "https://github.com/tree-sitter-grammars/tree-sitter-markdown" ; v0.4.1
+                         :commit "413285231ce8fa8b11e7074bbe265b48aa7277f9"
+                         :source-dir "tree-sitter-markdown-inline/src")
+        (typescript      "https://github.com/tree-sitter/tree-sitter-typescript"
+                         :commit "8e13e1db35b941fc57f2bd2dd4628180448c17d5"
+                         :source-dir "typescript/src")
+        (tsx             "https://github.com/tree-sitter/tree-sitter-typescript"
+                         :commit "8e13e1db35b941fc57f2bd2dd4628180448c17d5"
+                         :source-dir "tsx/src")
+        (dockerfile      "https://github.com/camdencheek/tree-sitter-dockerfile"
+                         :commit "087daa20438a6cc01fa5e6fe6906d77c869d19fe")
+        (json            "https://github.com/tree-sitter/tree-sitter-json"
+                         :commit "4d770d31f732d50d3ec373865822fbe659e47c75"))
+      treesit-auto-install-grammar 'always) ; 未インストールなら上記から自動ビルド
+;; Emacs 31 は既定で ts-mode を使わない。従来モードがある言語はここで ts 版に切り替える
+(setopt treesit-enabled-modes '(json-ts-mode))
+;; .ts / .tsx / Dockerfile は Emacs 31 が自動で *-ts-mode に割り当てる。
+;; markdown-ts-mode (experimental) は autoload されていないので手で登録する
+(autoload 'markdown-ts-mode "markdown-ts-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-ts-mode))
 
-;; ==================================================
-;; Server
-;; ==================================================
-(require 'server)
-(unless (server-running-p) (server-start))
-
-;; ==================================================
-;; Language
-;; ==================================================
-(set-language-environment 'Japanese)
+;;;; 文字コード / 文字幅
+(set-language-environment "Japanese")
 (prefer-coding-system 'utf-8)
+(use-default-char-width-table)          ; East Asian Ambiguous 文字を半角幅に
 
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-buffer-file-coding-system 'utf-8)
-;; (setq default-buffer-file-coding-system 'utf-8)
-(setq buffer-file-coding-system 'utf-8)
-
-;; ==================================================
-;; *scratch* AA
-;; ==================================================
-(setq initial-scratch-message
-";;                          .::::::::::::::::::::::::::::::::::::.
-;;                       ／::::::::::::::::::::::::::::::::::::::::＼
-;;                     ／::::::::::::::::::::::::::::::::::::::::::::丶
-;;                    .::::::::::::::::/:::::::::::::::::::::::::::::::.
-;;                  /::/:::::::::::::／:::::::::::::::::::::::::::::::::.
-;; .               /:／::::::::::/::/ |:::::::l::::::::::::::::::::::::
-;;                .:/ .′:::::::／':/  .:::::::|:::|::::::::::::::::／
-;;               '/  :::::::::/  .:′  八::::::|i::八:::::::::::::／
-;;              {i   |:::::::/   ヘ      ､::::|ﾍ::: ＼:::::::::／
-;;                   |::::::′    {: ＼    ＼::!  ＼〉  ＼:::::/
-;; .                 l:l ::{          ＼    ＼     ＞ ⌒  ＼: /
-;;                   j八:::l 「￣厂::乙ト     ~¨  斗────────/
-;;                      l::| 人, 乂::::ｿ            ん:::(_′
-;;                      l::|                        乂:::ソ
-;;                      |:: .:/:/:/:/:.                   l
-;;                      :::{             ────  、 .:/:/:/:.
-;;                     .:::∧           Ⅴ ￣￣   }         ∧
-;;                    .:::::＼         、      ′         ::ﾍ
-;;                  /::::::::⌒ヽ、       ＿＿ノ        ノ:::ﾍ
-;;                .′::::〉::}  }:＞...  ＿＿,.. -=ﾆ:::/:::::/:＼
-;;               /:::::/⌒::ﾘ    弋__  - ' _,. --イ〉ヽ ::::/── 〉
-;; .            /:::::/   ∨             ⌒)イ '  ／  / ::: /  ／ ／:＞...
-;;             /:::: ′    |            ／) ﾍ  ／   /:::::く⌒ヽ／  l:::::∧
-;; .          /:::::′     }              ﾉ  V   ./:::r{⌒｀ ヽ ',  |::::: ∧
-;;           /:::::|     ′           イ⌒       .::: ﾉ 、  ｀   i  j ::::: ∧
-;; .        /:::::/     /         ／  ///{    /:::( ﾍ         /   | :::::: ∧
-;;         /:::::(     /         /   ////!   {::::／/        /    }:::::::::∧
-")
-
-;; ==================================================
-;; Key Bindings
-;; ==================================================
-(global-set-key "\C-h" 'delete-backward-char)
-(define-key isearch-mode-map "\C-h" 'isearch-delete-char)
-(global-set-key "\M-g" 'goto-line)
-(global-set-key "\C-o" 'dabbrev-expand)
-(global-set-key "\C-m" 'newline-and-indent)
-(global-set-key "\C-j" 'newline)
-(global-set-key "\M-," 'pop-tag-mark)
-(define-key minibuffer-local-completion-map  "\C-w" 'backward-kill-word)
-
-;; ==================================================
-;; Font
-;; ==================================================
-
-;; set east asian ambiguous width 1
-(defun set-east-asian-ambiguous-width (width)
-  (while (char-table-parent char-width-table)
-    (setq char-width-table (char-table-parent char-width-table)))
-  (let ((table (make-char-table nil)))
-    (dolist
-        (range
-         '(#x00A1 #x00A4 (#x00A7 . #x00A8) #x00AA (#x00AD . #x00AE)
-                  (#x00B0 . #x00B4) (#x00B6 . #x00BA) (#x00BC . #x00BF)
-                  #x00C6 #x00D0 (#x00D7 . #x00D8) (#x00DE . #x00E1) #x00E6
-                  (#x00E8 . #x00EA) (#x00EC . #x00ED) #x00F0
-                  (#x00F2 . #x00F3) (#x00F7 . #x00FA) #x00FC #x00FE
-                  #x0101 #x0111 #x0113 #x011B (#x0126 . #x0127) #x012B
-                  (#x0131 . #x0133) #x0138 (#x013F . #x0142) #x0144
-                  (#x0148 . #x014B) #x014D (#x0152 . #x0153)
-                  (#x0166 . #x0167) #x016B #x01CE #x01D0 #x01D2 #x01D4
-                  #x01D6 #x01D8 #x01DA #x01DC #x0251 #x0261 #x02C4 #x02C7
-                  (#x02C9 . #x02CB) #x02CD #x02D0 (#x02D8 . #x02DB) #x02DD
-                  #x02DF (#x0300 . #x036F) (#x0391 . #x03A9)
-                  (#x03B1 . #x03C1) (#x03C3 . #x03C9) #x0401
-                  (#x0410 . #x044F) #x0451 #x2010 (#x2013 . #x2016)
-                  (#x2018 . #x2019) (#x201C . #x201D) (#x2020 . #x2022)
-                  (#x2024 . #x2027) #x2030 (#x2032 . #x2033) #x2035 #x203B
-                  #x203E #x2074 #x207F (#x2081 . #x2084) #x20AC #x2103
-                  #x2105 #x2109 #x2113 #x2116 (#x2121 . #x2122) #x2126
-                  #x212B (#x2153 . #x2154) (#x215B . #x215E)
-                  (#x2160 . #x216B) (#x2170 . #x2179) (#x2190 . #x2199)
-                  (#x21B8 . #x21B9) #x21D2 #x21D4 #x21E7 #x2200
-                  (#x2202 . #x2203) (#x2207 . #x2208) #x220B #x220F #x2211
-                  #x2215 #x221A (#x221D . #x2220) #x2223 #x2225
-                  (#x2227 . #x222C) #x222E (#x2234 . #x2237)
-                  (#x223C . #x223D) #x2248 #x224C #x2252 (#x2260 . #x2261)
-                  (#x2264 . #x2267) (#x226A . #x226B) (#x226E . #x226F)
-                  (#x2282 . #x2283) (#x2286 . #x2287) #x2295 #x2299 #x22A5
-                  #x22BF #x2312 (#x2460 . #x24E9) (#x24EB . #x254B)
-                  (#x2550 . #x2573) (#x2580 . #x258F) (#x2592 . #x2595)
-                  (#x25A0 . #x25A1) (#x25A3 . #x25A9) (#x25B2 . #x25B3)
-                  (#x25B6 . #x25B7) (#x25BC . #x25BD) (#x25C0 . #x25C1)
-                  (#x25C6 . #x25C8) #x25CB (#x25CE . #x25D1)
-                  (#x25E2 . #x25E5) #x25EF (#x2605 . #x2606) #x2609
-                  (#x260E . #x260F) (#x2614 . #x2615) #x261C #x261E #x2640
-                  #x2642 (#x2660 . #x2661) (#x2663 . #x2665)
-                  (#x2667 . #x266A) (#x266C . #x266D) #x266F #x273D
-                  (#x2776 . #x277F) (#xE000 . #xF8FF) (#xFE00 . #xFE0F)
-                  #xFFFD
-                  ))
-      (set-char-table-range table range width))
-    (optimize-char-table table)
-    (set-char-table-parent table char-width-table)
-    (setq char-width-table table)))
-(set-east-asian-ambiguous-width 1)
-
-;; ==================================================
-;; Looks
-;; ==================================================
-
-(if (display-graphic-p)
-    (progn (menu-bar-mode 0)
-           (toggle-scroll-bar 0)
-           (tool-bar-mode 0)))
-
-(blink-cursor-mode 0)
+;;;; 見た目
+(add-to-list 'custom-theme-load-path (locate-user-emacs-file "themes"))
+(setq treesit-font-lock-level 4)
+(load-theme 'vscode-light t)
 (menu-bar-mode 0)
-(setq transient-mark-mode t)
-(set-face-background 'region "gray")
-(set-face-foreground 'region "black")
-(show-paren-mode)
+(setq inhibit-startup-screen t
+      ring-bell-function #'ignore      ; C-g などでベルを鳴らさない
+      visible-cursor nil)              ; 端末に「カーソル点滅 ON」(cvvis) を送らない
+(global-display-line-numbers-mode 1)
+(setq-default truncate-lines t)
 
-;; hide *GNU Emacs* buffer
-(setq inhibit-startup-screen t)
+;; TAB・全角スペース・行末空白を可視化
+(setq whitespace-style '(face tabs trailing spaces)
+      whitespace-space-regexp "\\(\u3000+\\)"
+      whitespace-global-modes '(prog-mode text-mode conf-mode))
+(global-whitespace-mode 1)
 
-(defface my-face-b-1 '((t (:background "gray"))) nil)
-(defface my-face-b-2 '((t (:background "gray26"))) nil)
-(defface my-face-u-1 '((t (:foreground "SteelBlue" :underline t))) nil)
-(defvar my-face-b-1 'my-face-b-1)
-(defvar my-face-b-2 'my-face-b-2)
-(defvar my-face-u-1 'my-face-u-1)
+;; JSON のキー/定数を VS Code Light+ の配色に (face を他言語と共有しているので mode 単位で差し替え)
+(add-hook 'json-ts-mode-hook
+          (lambda ()
+            (face-remap-add-relative 'font-lock-property-use-face :foreground "#0451A5")
+            (face-remap-add-relative 'font-lock-constant-face :foreground "#0000FF")))
 
-(defadvice font-lock-mode (before my-font-lock-mode ())
-  (font-lock-add-keywords
-   major-mode
-   '(("\t" 0 my-face-b-2 append)
-     ("　" 0 my-face-b-1 append)
-     ("[ \t]+$" 0 my-face-u-1 append)
-     ;;("[\r]*\n" 0 my-face-r-1 append)
-     )))
-(ad-enable-advice 'font-lock-mode 'before 'my-font-lock-mode)
-(ad-activate 'font-lock-mode)
+;;;; インデント
+(setq-default indent-tabs-mode nil tab-width 2)
+(setq c-basic-offset 2
+      js-indent-level 2)
 
-;; use whitespaces instead of TAB
-(setq-default tab-width 2 indent-tabs-mode nil)
-(setq c-basic-offset 2)
+;;;; 補完: ミニバッファは fido、バッファ内は completion-preview (Emacs 30+)
+(fido-vertical-mode 1)
+(savehist-mode 1)
+(recentf-mode 1)
+(setq completion-ignore-case t
+      read-buffer-completion-ignore-case t
+      read-file-name-completion-ignore-case t)
+(global-completion-preview-mode 1)
+(which-key-mode 1)
+(editorconfig-mode 1)
+(setq use-short-answers t                ; yes/no を y/n に
+      isearch-lazy-count t)              ; 検索中に件数 (n/m) を表示
 
-;; show line number
-(global-display-line-numbers-mode t)
-(setq display-line-numbers "%4d: ")
+;; C-x b でバッファ・最近のファイル・プロジェクト内ファイルをまとめて選ぶ (旧 helm-mini 相当)
+(defun my/switch-candidates ()
+  (let* ((proj (project-current))
+         (root (and proj (project-root proj)))
+         (buffers (seq-remove (lambda (b) (string-prefix-p " " b))
+                              (mapcar #'buffer-name (buffer-list))))
+         (visited (delq nil (mapcar #'buffer-file-name (buffer-list))))
+         (files (and proj (mapcar (lambda (f) (file-relative-name f root))
+                                  (seq-difference (project-files proj) visited))))
+         (recent (mapcar #'abbreviate-file-name
+                         (seq-difference recentf-list visited))))
+    (list root (append buffers files recent))))
 
-;; truncate
-(set-default 'truncate-lines t)
-(set-default 'truncate-partial-width-windows t)
+(defun my/switch-to-anything ()
+  "Switch to a buffer, a recent file, or a file in the current project."
+  (interactive)
+  (pcase-let* ((`(,root ,cands) (my/switch-candidates))
+               (choice (completing-read "Switch to: " cands nil nil)))
+    (cond ((get-buffer choice) (switch-to-buffer choice))
+          ((and root (file-exists-p (expand-file-name choice root)))
+           (find-file (expand-file-name choice root)))
+          (t (find-file choice)))))
 
-;; ==================================================
-;; Indent
-;; ==================================================
-(setq c-default-style '((java-mode . "java") (other . "linux")))
-(setq-default tab-width 2 indent-tabs-mode nil)
-(setq c-basic-offset 2)
+;;;; キーバインド (ヘルプは F1 で)
+(keymap-global-set "C-x b" #'my/switch-to-anything)
+(keymap-global-set "C-h" #'delete-backward-char)
+(keymap-set isearch-mode-map "C-h" #'isearch-delete-char)
+(keymap-set minibuffer-local-map "C-w" #'backward-kill-word)
+(keymap-global-set "M-g" #'goto-line)
+(keymap-global-set "C-o" #'dabbrev-expand)
+(keymap-global-set "M-o" #'completion-at-point)
 
-;; ==================================================
-;; Thema
-;; ==================================================
-(require 'zenburn-theme)
-
-;; ==================================================
-;; Company
-;; ==================================================
-(global-company-mode +1)
-(setq company-idle-delay nil)
-
-(set-face-attribute 'company-tooltip nil :foreground "black" :background "lightgrey")
-(set-face-attribute 'company-tooltip-common nil :foreground "black" :background "lightgrey")
-(set-face-attribute 'company-tooltip-common-selection nil :foreground "white" :background "steelblue")
-(set-face-attribute 'company-tooltip-selection nil :foreground "black" :background "steelblue")
-(set-face-attribute 'company-preview-common nil :background nil :foreground "lightgrey" :underline t)
-(set-face-attribute 'company-scrollbar-fg nil :background "orange")
-(set-face-attribute 'company-scrollbar-bg nil :background "gray40")
-
-(global-set-key (kbd "M-o") 'company-complete)
-
-;; ==================================================
-;; Helm
-;; ==================================================
-(require 'helm-config)
-(require 'helm)
-
-;; customize
-(setq helm-boring-file-regexp-list '("~$" "\\.elc$"))
-(setq helm-delete-minibuffer-contents-from-point t)
-(setq helm-ff-skip-boring-files t)
-(setq helm-ls-git-show-abs-or-relative 'relative)
-(setq helm-truncate-lines 't)
-
-;; http://d.hatena.ne.jp/syohex/20131016/1381935863
-(defun my/helm-etags-select (arg)
-  (interactive "P")
-  (let ((tag  (helm-etags-get-tag-file))
-        (helm-execute-action-at-once-if-one t))
-    (when (or (equal arg '(4))
-              (and helm-etags-mtime-alist
-                   (helm-etags-file-modified-p tag)))
-      (remhash tag helm-etags-cache))
-    (if (and tag (file-exists-p tag))
-        (helm :sources 'helm-source-etags-select :keymap helm-etags-map
-              :input (concat (thing-at-point 'symbol) " ")
-              :buffer "*helm etags*"
-              :default (concat "\\_<" (thing-at-point 'symbol) "\\_>"))
-      (message "Error: No tag file found, please create one with etags shell command."))))
-
-;; set helm-command-prefix-key to "C-q"
-(global-set-key (kbd "C-c q") 'quoted-insert)
-(global-unset-key (kbd "C-q"))
-(global-set-key (kbd "C-q") 'helm-command-prefix)
-
-;; Use ripgrep
-(setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s")
-(setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'"))
-
-;; key settings
-(global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "M-x")   'helm-M-x)
-;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
-
-(define-key helm-command-map (kbd "d") 'helm-descbinds)
-(define-key helm-command-map (kbd "f") 'helm-flycheck)
-(define-key helm-command-map (kbd "g") 'helm-git-grep)
-(define-key helm-command-map (kbd "i") 'helm-imenu)
-(define-key helm-command-map (kbd "l") 'helm-ls-git-ls)
-(define-key helm-command-map (kbd "o") 'helm-occur)
-(define-key helm-command-map (kbd "r") 'helm-resume)
-(define-key helm-command-map (kbd "t") 'my/helm-etags-select)
-(define-key helm-command-map (kbd "y") 'helm-show-kill-ring)
-
-;; key settings for helm
-(define-key helm-map (kbd "C-h") 'delete-backward-char)
-(define-key helm-map (kbd "C-w") 'backward-kill-word)
-(define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
-;; move to occur mode when C-o is typed in isearch
-(define-key isearch-mode-map (kbd "C-o") 'helm-occur-from-isearch)
-
-;; ==================================================
-;; Howm
-;; ==================================================
-(require 'howm)
-(setq howm-menu-lang 'ja)
-(setq howm-directory "~/Dropbox/howm")
-(setq howm-view-use-grep t)
-(setq howm-process-coding-system 'utf-8-unix)
-
-;; ==================================================
-;; Undo
-;; ==================================================
-(require 'undo-tree)
-(global-undo-tree-mode t)
-
-;; ==================================================
-;; multiple-cursor
-;; ==================================================
-;; multiple-cursors & smartrep
-(require 'multiple-cursors)
-(require 'region-bindings-mode)
-(region-bindings-mode-enable)
-
-(define-key region-bindings-mode-map "a" 'mc/mark-all-like-this)
-(define-key region-bindings-mode-map "d" 'mc/mark-all-dwim)
-(define-key region-bindings-mode-map "n" 'mc/mark-next-like-this)
-(define-key region-bindings-mode-map "N" 'mc/mark-previous-like-this)
-(define-key region-bindings-mode-map "p" 'mc/mark-previous-like-this)
-(define-key region-bindings-mode-map "m" 'mc/mark-more-like-this-extended)
-(define-key region-bindings-mode-map "u" 'mc/unmark-next-like-this)
-(define-key region-bindings-mode-map "U" 'mc/unmark-previous-like-this)
-(define-key region-bindings-mode-map "s" 'mc/skip-to-next-like-this)
-(define-key region-bindings-mode-map "S" 'mc/skip-to-previous-like-this)
-(define-key region-bindings-mode-map "i" 'mc/insert-numbers)
-(define-key region-bindings-mode-map "h" 'mc-hide-unmatched-lines-mode)
-(define-key mc/keymap (kbd "C-c h") 'mc-hide-unmatched-lines-mode)
-
-;; ==================================================
-;; Misc.
-;; ==================================================
-
-;; git-gutter
-(global-git-gutter-mode t)
-
-;; flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
-
-;; ignores cases in file completetion
-(setq completion-ignore-case t)
-
-;; auto revert
+;;;; その他
 (global-auto-revert-mode 1)
+(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+(setq backup-directory-alist '((".*" . "~/.ehist"))
+      auto-save-default nil
+      auto-save-list-file-prefix nil
+      create-lockfiles nil)
 
-;; uniquify
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+;; WSL: kill した文字列を Windows クリップボードへ (clip.exe は CP932 で読むので変換して渡す)
+(when-let* ((clip (executable-find "clip.exe")))
+  (setq interprogram-cut-function
+        (lambda (text)
+          (let ((proc (make-process :name "clip.exe" :command (list clip)
+                                    :connection-type 'pipe :noquery t
+                                    :coding 'cp932-dos)))
+            (process-send-string proc text)
+            (process-send-eof proc)))))
 
-;; add +x to files that start with "#!"
-(add-hook 'after-save-hook
-          '(lambda ()
-             (save-restriction
-               (widen)
-               (if (string= "#!" (buffer-substring 1 (min 3 (point-max))))
-                   (let ((name (buffer-file-name)))
-                     (or (char-equal ?. (string-to-char (file-name-nondirectory name)))
-                         (let ((mode (file-modes name)))
-                           (set-file-modes name (logior mode (logand (/ mode 4) 73)))
-                           (message (concat "Wrote " name " (+x)")))))))))
+;; マシン固有の設定
+(load (locate-user-emacs-file "init-local.el") :no-error :no-message)
 
-;; avy
-(global-set-key (kbd "M-j") 'avy-goto-word-1)
-(global-set-key (kbd "C-M-j") 'avy-goto-char)
-;; (global-set-key (kbd "C-M-J") 'avy-goto-line)
-
-;; local
-(if (file-exists-p "~/.emacs.d/init-local.el") (load "~/.emacs.d/init-local.el"))
-
-;; History
-(setq backup-directory-alist '((".*" . "~/.ehist")))
-(setq undo-tree-auto-save-history nil)
-(setq auto-save-default nil)
-(setq auto-save-list-file-prefix nil)
-(setq create-lockfiles nil)
-
-;; LSP
-(setq lsp-enable-snippet nil)
-
-;; ==================================================
-;; Prog Modes
-;; ==================================================
-
-(add-hook 'prog-mode-hook #'lsp)
-
-;; Javascript
-(setq js-indent-level 2)
-
-;; TypeScript
-(require 'typescript-mode)
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-(setq typescript-indent-level 2)
-(add-hook 'typescript-mode-hook 'prettier-js-mode)
-
-;; Ruby
-(add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Capfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Cheffile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
-
-;; Go
-(add-hook 'before-save-hook 'gofmt-before-save)
-(add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
-(add-hook 'go-mode-hook (lambda () (local-set-key (kbd "C-c C-i") 'go-impl)))
-(add-hook 'go-mode-hook (lambda () (local-set-key (kbd "C-c C-r") 'go-rename)))
-(add-to-list 'exec-path (expand-file-name "~/go/bin"))
-(set-face-attribute 'eldoc-highlight-function-argument
-                    nil :underline t :foreground "#7F9F7F" :weight 'bold)
-(setq gofmt-command "goimports")
-(font-lock-add-keywords 'go-mode '(("\\b\\(err\\)\\b" 1 '((:foreground "#7F9F7F") (:weight bold)) t)))
-
-;; Java/Groovy
-(add-to-list 'auto-mode-alist '("\\.gradle" . groovy-mode))
-
-;; Web Mode
-(add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx$" . rjsx-mode))
-(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-css-indent-offset 2)
-(setq web-mode-code-indent-offset 2)
-
-;; Rust
-(cl-delete-if (lambda (element) (equal (cdr element) 'rust-mode)) auto-mode-alist)
-(cl-delete-if (lambda (element) (equal (cdr element) 'rustic-mode)) auto-mode-alist)
-(add-to-list 'auto-mode-alist '("\\.rs$" . rustic-mode))
-
-;; adoc
-(add-to-list 'auto-mode-alist '("\\.adoc$" . adoc-mode))
+;;; init.el ends here

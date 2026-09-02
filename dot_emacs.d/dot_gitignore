@@ -15,3 +15,11 @@ el-get
 elpa
 network-security.data
 recentf
+custom.el
+tree-sitter/
+auto-save-list/
+eln-cache/
+url/
+init.el.bak
+elpa.bak
+el-get.bak
