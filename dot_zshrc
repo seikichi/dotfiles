@@ -8,7 +8,7 @@
 ## envs
 export LANG=ja_JP.UTF-8
 export OUTPUT_CHARSET=utf-8
-export EDITOR="emacsclient -t"
+export EDITOR="emacs"
 
 ## prompt
 PROMPT="%m:%n%% "
@@ -132,7 +132,3 @@ if [[ -n "${DEV_CONTAINER:-}" ]]; then
     HISTFILE=/zsh-history/.zsh_history
 fi
 
-# mise
-if command -v mise >/dev/null 2>&1; then
-    eval "$(mise activate zsh)"
-fi
