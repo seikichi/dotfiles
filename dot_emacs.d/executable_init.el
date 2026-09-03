@@ -17,7 +17,32 @@
 
 (use-package multiple-cursors
   :vc (:url "https://github.com/magnars/multiple-cursors.el"
-       :rev "94b8b07a4bab87f803123723b68227565429dfa1")) ; master 2026-09-02 時点
+            :rev "94b8b07a4bab87f803123723b68227565429dfa1")) ; master 2026-09-02 時点
+
+(use-package consult
+  :vc (:url "https://github.com/minad/consult"
+            :rev "3ddec5493bce5445f099537be50b7a4f79c68321") ; 3.7 2026-09-02 時点
+  :bind (("C-x b" . consult-buffer))
+  :config
+  (add-to-list 'consult-preview-allowed-hooks
+               'global-display-line-numbers-mode-enable-in-buffer))
+
+(use-package orderless
+  :vc (:url "https://github.com/oantolin/orderless"
+            :rev "cebe19e3cf0f30604d1ed1bfaa74fff21a4e89a5") ; 1.7 2026-09-02 時点
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides
+   '((file (styles partial-completion))))
+  (completion-pcm-leading-wildcard t)
+  :config
+  ;; Orderless の component 区切りとして SPC を入力できるようにする
+  (keymap-unset minibuffer-local-completion-map "SPC")
+
+  ;; Fido が設定する `flex' を Orderless に上書き
+  (add-hook 'icomplete-minibuffer-setup-hook
+            (lambda ()
+              (setq-local completion-styles '(orderless basic)))))
 
 ;; リージョン選択中だけ有効な 1 キー操作
 (defvar-keymap my/region-map
@@ -101,40 +126,19 @@
 (fido-vertical-mode 1)
 (savehist-mode 1)
 (recentf-mode 1)
+
 (setq completion-ignore-case t
       read-buffer-completion-ignore-case t
       read-file-name-completion-ignore-case t)
+
 (global-completion-preview-mode 1)
 (which-key-mode 1)
 (editorconfig-mode 1)
+
 (setq use-short-answers t                ; yes/no を y/n に
       isearch-lazy-count t)              ; 検索中に件数 (n/m) を表示
 
-;; C-x b でバッファ・最近のファイル・プロジェクト内ファイルをまとめて選ぶ (旧 helm-mini 相当)
-(defun my/switch-candidates ()
-  (let* ((proj (project-current))
-         (root (and proj (project-root proj)))
-         (buffers (seq-remove (lambda (b) (string-prefix-p " " b))
-                              (mapcar #'buffer-name (buffer-list))))
-         (visited (delq nil (mapcar #'buffer-file-name (buffer-list))))
-         (files (and proj (mapcar (lambda (f) (file-relative-name f root))
-                                  (seq-difference (project-files proj) visited))))
-         (recent (mapcar #'abbreviate-file-name
-                         (seq-difference recentf-list visited))))
-    (list root (append buffers files recent))))
-
-(defun my/switch-to-anything ()
-  "Switch to a buffer, a recent file, or a file in the current project."
-  (interactive)
-  (pcase-let* ((`(,root ,cands) (my/switch-candidates))
-               (choice (completing-read "Switch to: " cands nil nil)))
-    (cond ((get-buffer choice) (switch-to-buffer choice))
-          ((and root (file-exists-p (expand-file-name choice root)))
-           (find-file (expand-file-name choice root)))
-          (t (find-file choice)))))
-
 ;;;; キーバインド (ヘルプは F1 で)
-(keymap-global-set "C-x b" #'my/switch-to-anything)
 (keymap-global-set "C-h" #'delete-backward-char)
 (keymap-set isearch-mode-map "C-h" #'isearch-delete-char)
 (keymap-set minibuffer-local-map "C-w" #'backward-kill-word)
