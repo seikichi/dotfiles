@@ -74,7 +74,12 @@
 (setq inhibit-startup-screen t
       ring-bell-function #'ignore      ; C-g などでベルを鳴らさない
       visible-cursor nil)              ; 端末に「カーソル点滅 ON」(cvvis) を送らない
+
+;; 行番号を表示 + 4桁分の幅を確保
 (global-display-line-numbers-mode 1)
+(setq-default display-line-numbers-width 4)
+(setq-default line-prefix "  ")
+
 (setq-default truncate-lines t)
 
 ;; TAB・全角スペース・行末空白を可視化
