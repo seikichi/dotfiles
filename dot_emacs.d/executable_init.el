@@ -1,37 +1,33 @@
-;;; init.el --- Emacs 31 minimal config -*- lexical-binding: t -*-
+;;; init.el -*- lexical-binding: t -*-
 (when (version< emacs-version "31")
   (error "This init.el requires Emacs 31 or later (running %s)" emacs-version))
 
-;;;; パッケージ: 組み込み use-package + package-vc。全て Git コミットで固定する
-(setq package-archives nil        ; ELPA/MELPA は使わない (未固定の取得経路を塞ぐ)
-      custom-file (locate-user-emacs-file "custom.el"))
+;;;; パッケージ管理
+;; ELPA/MELPA は使わない (未固定の取得経路を塞ぐ)
+(setq package-archives nil)
+
+;; Emacs が自動生成する設定は custom.el に保存する
+(setq custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file :no-error :no-message)
 
 (use-package avy
   :vc (:url "https://github.com/abo-abo/avy"
        :rev "933d1f36cca0f71e4acb5fac707e9ae26c536264") ; master 2026-09-02 時点
-  :bind (("M-j"   . avy-goto-word-1)
-         ("C-M-j" . avy-goto-char)))
+  :bind (("M-j"   . avy-goto-word-1)))
 
 (use-package multiple-cursors
   :vc (:url "https://github.com/magnars/multiple-cursors.el"
        :rev "94b8b07a4bab87f803123723b68227565429dfa1")) ; master 2026-09-02 時点
 
-;; リージョン選択中だけ有効な 1 キー操作 (旧 region-bindings-mode 相当)
+;; リージョン選択中だけ有効な 1 キー操作
 (defvar-keymap my/region-map
   "a" #'mc/mark-all-like-this
-  "d" #'mc/mark-all-dwim
   "n" #'mc/mark-next-like-this
   "p" #'mc/mark-previous-like-this
-  "N" #'mc/mark-previous-like-this
-  "m" #'mc/mark-more-like-this-extended
   "u" #'mc/unmark-next-like-this
   "U" #'mc/unmark-previous-like-this
   "s" #'mc/skip-to-next-like-this
-  "S" #'mc/skip-to-previous-like-this
-  "i" #'mc/insert-numbers
-  "l" #'mc/edit-lines
-  "h" #'mc-hide-unmatched-lines-mode)
+  "S" #'mc/skip-to-previous-like-this)
 (add-to-list 'emulation-mode-map-alists `((mark-active . ,my/region-map)))
 
 ;;;; Tree-sitter: grammar もコミット固定 (Emacs 31 の各 ts-mode が動作確認済みの版)
@@ -54,8 +50,10 @@
         (json            "https://github.com/tree-sitter/tree-sitter-json"
                          :commit "4d770d31f732d50d3ec373865822fbe659e47c75"))
       treesit-auto-install-grammar 'always) ; 未インストールなら上記から自動ビルド
+
 ;; Emacs 31 は既定で ts-mode を使わない。従来モードがある言語はここで ts 版に切り替える
 (setopt treesit-enabled-modes '(json-ts-mode))
+
 ;; .ts / .tsx / Dockerfile は Emacs 31 が自動で *-ts-mode に割り当てる。
 ;; markdown-ts-mode (experimental) は autoload されていないので手で登録する
 (autoload 'markdown-ts-mode "markdown-ts-mode" nil t)
