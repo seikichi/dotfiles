@@ -17,7 +17,8 @@
 
 (use-package multiple-cursors
   :vc (:url "https://github.com/magnars/multiple-cursors.el"
-            :rev "94b8b07a4bab87f803123723b68227565429dfa1")) ; master 2026-09-02 時点
+            :rev "94b8b07a4bab87f803123723b68227565429dfa1") ; master 2026-09-02 時点
+  :defer t)
 
 (use-package consult
   :vc (:url "https://github.com/minad/consult"
