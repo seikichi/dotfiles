@@ -25,7 +25,7 @@
   :bind (("C-x b" . consult-buffer))
   :config
   (add-to-list 'consult-preview-allowed-hooks
-               'global-display-line-numbers-mode-enable-in-buffer))
+               'global-display-line-numbers-mode))
 
 (use-package orderless
   :vc (:url "https://github.com/oantolin/orderless"
