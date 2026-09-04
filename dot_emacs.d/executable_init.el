@@ -96,11 +96,13 @@
         (dockerfile      "https://github.com/camdencheek/tree-sitter-dockerfile"
                          :commit "087daa20438a6cc01fa5e6fe6906d77c869d19fe")
         (json            "https://github.com/tree-sitter/tree-sitter-json"
-                         :commit "4d770d31f732d50d3ec373865822fbe659e47c75"))
+                         :commit "4d770d31f732d50d3ec373865822fbe659e47c75")
+        (yaml            "https://github.com/tree-sitter-grammars/tree-sitter-yaml" ; v0.7.2
+                         :commit "7708026449bed86239b1cd5bce6e3c34dbca6415"))
       treesit-auto-install-grammar 'always) ; 未インストールなら上記から自動ビルド
 
 ;; Emacs 31 は既定で ts-mode を使わない。従来モードがある言語はここで ts 版に切り替える
-(setopt treesit-enabled-modes '(json-ts-mode))
+(setopt treesit-enabled-modes '(json-ts-mode yaml-ts-mode))
 
 ;; .ts / .tsx / Dockerfile は Emacs 31 が自動で *-ts-mode に割り当てる。
 ;; markdown-ts-mode (experimental) は autoload されていないので手で登録する
