@@ -23,7 +23,9 @@
 (use-package consult
   :vc (:url "https://github.com/minad/consult"
             :rev "3ddec5493bce5445f099537be50b7a4f79c68321") ; 3.7 2026-09-02 時点
-  :bind (("C-x b" . consult-buffer))
+  :bind (("C-x b" . consult-buffer)
+         ("M-s g" . consult-git-grep)
+         ("M-s r" . consult-ripgrep))
   :config
   (add-to-list 'consult-preview-allowed-hooks
                'global-display-line-numbers-mode))
