@@ -15,6 +15,26 @@
        :rev "933d1f36cca0f71e4acb5fac707e9ae26c536264") ; master 2026-09-02 時点
   :bind (("M-j"   . avy-goto-word-1)))
 
+(use-package vundo
+  :vc (:url "https://github.com/casouri/vundo"
+       :rev "b89f719824fe5da0f6a7590fad3ece798fd59909") ; 2.4.0 2026-09-04 時点
+  :bind (("C-x u" . vundo))
+  :custom
+  (vundo-glyph-alist vundo-unicode-symbols)
+  ;; (vundo-compact-display t)
+  )
+
+(use-package undo-fu-session
+  :vc (:url "https://github.com/emacsmirror/undo-fu-session"
+            :rev "92d733a5b162a70c572fac17b9f9e872426df547") ; 0.8 2026-09-04 時点
+  :custom
+  (undo-fu-session-directory (expand-file-name "undo/" "~/.ehist/"))
+  ;; 履歴ファイルが無制限に増え続けないようにする
+  (undo-fu-session-file-limit 1000)
+  (undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  :config
+  (undo-fu-session-global-mode 1))
+
 (use-package multiple-cursors
   :vc (:url "https://github.com/magnars/multiple-cursors.el"
             :rev "94b8b07a4bab87f803123723b68227565429dfa1") ; master 2026-09-02 時点
@@ -149,13 +169,26 @@
 (keymap-global-set "C-o" #'dabbrev-expand)
 (keymap-global-set "M-o" #'completion-at-point)
 
-;;;; その他
+;;;; バックアップ / auto-save
 (global-auto-revert-mode 1)
+
+(let ((backup-dir   (expand-file-name "~/.ehist/backup/"))
+      (auto-save-dir (expand-file-name "~/.ehist/auto-save/"))
+      (session-dir   (expand-file-name "~/.ehist/auto-save-list/"))
+      (lock-dir      (expand-file-name "~/.ehist/lock/")))
+  (dolist (dir (list backup-dir auto-save-dir session-dir lock-dir)) (make-directory dir t))
+  (setq backup-directory-alist `((".*" . ,backup-dir))
+        auto-save-default t
+        auto-save-file-name-transforms `((".*" ,auto-save-dir sha1))
+        auto-save-list-file-prefix (expand-file-name ".saves-" session-dir)
+        lock-file-name-transforms `((".*" ,lock-dir sha1))
+        create-lockfiles t))
+(setq undo-limit        (* 8 1024 1024)
+      undo-strong-limit (* 12 1024 1024)
+      undo-outer-limit  (* 64 1024 1024))
+
+;;;; その他
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-(setq backup-directory-alist '((".*" . "~/.ehist"))
-      auto-save-default nil
-      auto-save-list-file-prefix nil
-      create-lockfiles nil)
 
 ;; WSL: kill した文字列を Windows クリップボードへ (clip.exe は CP932 で読むので変換して渡す)
 (when-let* ((clip (executable-find "clip.exe")))
@@ -169,5 +202,3 @@
 
 ;; マシン固有の設定
 (load (locate-user-emacs-file "init-local.el") :no-error :no-message)
-
-;;; init.el ends here
