@@ -44,6 +44,7 @@
   :vc (:url "https://github.com/minad/consult"
             :rev "3ddec5493bce5445f099537be50b7a4f79c68321") ; 3.7 2026-09-02 時点
   :bind (("C-x b" . consult-buffer)
+         ("M-s i" . consult-imenu)
          ("M-s g" . consult-git-grep)
          ("M-s r" . consult-ripgrep))
   :config
@@ -66,6 +67,21 @@
   (add-hook 'icomplete-minibuffer-setup-hook
             (lambda ()
               (setq-local completion-styles '(orderless basic)))))
+
+(use-package howm
+  :vc (:url "https://github.com/kaorahi/howm"
+       :rev "5338a56192858e911d3863cf7f7ead16fb6eaf9c")
+  :init
+  (require 'howm-markdown)
+
+  (setq howm-directory "~/howm"
+        howm-file-name-format "daily/%Y/%m/%Y-%m-%d.md"
+        howm-template "%cursor"
+        howm-menu-expiry-hours 1
+        howm-menu-refresh-after-save nil)
+
+  :config
+  (add-hook 'find-file-hook #'howm-set-mode))
 
 ;; リージョン選択中だけ有効な 1 キー操作
 (defvar-keymap my/region-map
